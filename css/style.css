@@ -5065,3 +5065,1867 @@ footer {
 
 }
 
+
+/* =========================================================
+   DESKTOP EDITION - KEUANGAN BUMDES SUMBER REJEKI
+   =========================================================
+   Prinsip:
+   - Mempertahankan seluruh class/ID dari CSS lama.
+   - Tidak mengubah JavaScript, Firebase, onclick, atau ID HTML.
+   - Desktop menjadi layout lebar dan nyaman untuk monitor.
+   - Aturan responsive lama tetap dipertahankan untuk HP.
+   ========================================================= */
+
+:root {
+    --warna-hijau: #166534;
+    --warna-hijau-tua: #14532d;
+    --warna-hijau-muda: #f0fdf4;
+    --warna-border: #e2e8f0;
+    --warna-teks: #1f2937;
+    --warna-teks-muda: #64748b;
+    --warna-bg: #f1f5f9;
+    --radius: 12px;
+    --shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+html {
+    min-width: 320px;
+    background: var(--warna-bg);
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--warna-bg);
+    color: var(--warna-teks);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    transition: background .15s ease, border-color .15s ease,
+                color .15s ease, box-shadow .15s ease,
+                transform .1s ease;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* =========================================================
+   APP / HEADER / CONTENT
+   ========================================================= */
+
+.app {
+    width: 100%;
+    max-width: 1500px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: #ffffff;
+    box-shadow: 0 0 35px rgba(15, 23, 42, 0.08);
+}
+
+.header {
+    position: relative;
+    padding: 22px 32px;
+    text-align: left;
+    background: linear-gradient(135deg, #14532d, #166534 55%, #15803d);
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.header h1 {
+    font-size: 25px;
+    line-height: 1.2;
+    letter-spacing: .3px;
+}
+
+.header p {
+    margin-top: 5px;
+    font-size: 13px;
+    opacity: .9;
+}
+
+.content {
+    padding: 28px 32px 35px;
+    background: var(--warna-bg);
+}
+
+.halaman {
+    padding: 0;
+}
+
+.halaman.aktif {
+    display: block;
+}
+
+/* =========================================================
+   PERIODE
+   ========================================================= */
+
+.periode {
+    min-height: 48px;
+    padding: 13px 18px;
+    margin-bottom: 18px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.periode span,
+.periode strong {
+    font-size: 13px;
+}
+
+/* =========================================================
+   DASHBOARD SALDO
+   ========================================================= */
+
+.saldo-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.card {
+    min-height: 108px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.card span {
+    margin-bottom: 10px;
+    color: var(--warna-teks-muda);
+    font-size: 13px;
+}
+
+.card strong {
+    font-size: 21px;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.laba-card {
+    margin-top: 16px;
+    padding: 21px;
+    background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.laba-card span {
+    color: #166534;
+}
+
+.laba-card strong {
+    font-size: 25px;
+    color: #166534;
+}
+
+/* =========================================================
+   SECTION / UNIT USAHA
+   ========================================================= */
+
+.section {
+    margin-top: 28px;
+}
+
+.section h2 {
+    margin-bottom: 14px;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.unit-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.unit-list button {
+    min-height: 68px;
+    padding: 15px 18px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: left;
+}
+
+.unit-list button:hover,
+.menu-grid button:hover,
+.transaksi-menu button:hover,
+.item-master-data:hover {
+    border-color: #86efac;
+    background: #f8fffa;
+    box-shadow: 0 5px 16px rgba(22, 101, 52, .08);
+}
+
+/* =========================================================
+   MENU UTAMA
+   ========================================================= */
+
+.menu-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.menu-grid button {
+    min-height: 66px;
+    padding: 14px 10px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   JUDUL HALAMAN & TOMBOL KEMBALI
+   ========================================================= */
+
+.halaman > h2,
+#halaman-piutang h2,
+#halaman-utang h2,
+#halaman-modal h2,
+#halaman-laporan h2 {
+    margin: 4px 0 20px;
+    font-size: 23px;
+    color: #1f2937;
+}
+
+.btn-kembali {
+    margin-bottom: 18px;
+    padding: 9px 15px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.btn-kembali:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+/* =========================================================
+   TRANSAKSI
+   ========================================================= */
+
+.transaksi-menu {
+    grid-template-columns: repeat(3, minmax(180px, 260px));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.transaksi-menu button {
+    min-height: 48px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+}
+
+.form-transaksi.aktif {
+    max-width: 1100px;
+}
+
+.form-transaksi {
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.form-transaksi h3,
+.form-piutang h3,
+.form-utang h3,
+.form-modal h3,
+.form-aset h3 {
+    margin-bottom: 20px;
+    color: #166534;
+}
+
+.form-transaksi .form-group,
+.form-piutang .form-group,
+.form-utang .form-group,
+.form-modal .form-group,
+.form-aset .form-group {
+    margin-bottom: 0;
+}
+
+.form-transaksi form,
+.form-piutang form,
+.form-utang form,
+.form-modal form,
+.form-aset form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+}
+
+.form-transaksi form > .form-group,
+.form-piutang form > .form-group,
+.form-utang form > .form-group,
+.form-modal form > .form-group,
+.form-aset form > .form-group {
+    min-width: 0;
+}
+
+.form-transaksi form > .form-group:last-child,
+.form-piutang form > .form-group:last-child,
+.form-utang form > .form-group:last-child,
+.form-modal form > .form-group:last-child,
+.form-aset form > .form-group:last-child {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    min-height: 43px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #111827;
+    outline: none;
+}
+
+.form-group textarea {
+    min-height: 92px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, .12);
+}
+
+.btn-simpan {
+    width: auto;
+    min-width: 160px;
+    min-height: 43px;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: #166534;
+    font-weight: 700;
+}
+
+.btn-simpan:hover {
+    background: #14532d;
+}
+
+.form-transaksi form .btn-simpan,
+.form-piutang form .btn-simpan,
+.form-utang form .btn-simpan,
+.form-modal form .btn-simpan,
+.form-aset form .btn-simpan {
+    grid-column: 1 / -1;
+    justify-self: start;
+}
+
+/* Jika tombol langsung berada di luar form */
+.form-transaksi > .btn-simpan {
+    width: auto;
+    min-width: 180px;
+}
+
+/* =========================================================
+   PESAN
+   ========================================================= */
+
+.pesan {
+    margin: 0 0 16px;
+    padding: 11px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+}
+
+.pesan.error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.pesan.success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+/* =========================================================
+   TABEL UMUM
+   ========================================================= */
+
+.tabel-scroll,
+.table-responsive,
+.tabel-utang-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.tabel-pemasukan,
+.tabel-pengeluaran,
+.tabel-transfer,
+.tabel-kas,
+.tabel-bank,
+.tabel-dana,
+.tabel-modal,
+.tabel-utang,
+.tabel-aset,
+.tabel-data,
+.tabel-laporan {
+    font-size: 13px;
+}
+
+.tabel-pemasukan th,
+.tabel-pemasukan td,
+.tabel-pengeluaran th,
+.tabel-pengeluaran td,
+.tabel-transfer th,
+.tabel-transfer td,
+.tabel-kas th,
+.tabel-kas td,
+.tabel-bank th,
+.tabel-bank td,
+.tabel-dana th,
+.tabel-dana td,
+.tabel-modal th,
+.tabel-modal td,
+.tabel-utang th,
+.tabel-utang td,
+.tabel-aset th,
+.tabel-aset td,
+.tabel-data th,
+.tabel-data td {
+    padding: 11px 12px;
+}
+
+.tabel-pemasukan thead th,
+.tabel-pengeluaran th,
+.tabel-transfer th,
+.tabel-kas thead th,
+.tabel-bank thead th,
+.tabel-dana thead th,
+.tabel-modal th,
+.tabel-utang th,
+.tabel-aset th,
+.tabel-data th {
+    background: #f8fafc;
+    color: #334155;
+    border-bottom: 1px solid #cbd5e1;
+}
+
+.tabel-pemasukan tbody tr:hover,
+.tabel-pengeluaran tbody tr:hover,
+.tabel-transfer tbody tr:hover,
+.tabel-kas tbody tr:hover,
+.tabel-bank tbody tr:hover,
+.tabel-dana tbody tr:hover,
+.tabel-modal tbody tr:hover,
+.tabel-utang tbody tr:hover,
+.tabel-aset tbody tr:hover,
+.tabel-data tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* =========================================================
+   TOTAL KARTU TRANSAKSI
+   ========================================================= */
+
+.total-pemasukan,
+.total-pengeluaran,
+.total-transfer {
+    max-width: 100%;
+    min-height: 54px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 10px;
+    border: 1px solid transparent;
+}
+
+.total-pemasukan {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.total-pengeluaran {
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+.total-transfer {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+/* =========================================================
+   SALDO KAS / BANK / DANA
+   ========================================================= */
+
+#halaman-kas .saldo-card,
+#halaman-bank .saldo-card,
+#halaman-dana .saldo-card {
+    min-height: 95px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+#halaman-kas .saldo-card strong,
+#halaman-bank .saldo-card strong,
+#halaman-dana .saldo-card strong {
+    font-size: 25px;
+    color: #166534;
+}
+
+#daftar-kas,
+#daftar-bank,
+#daftar-dana {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* =========================================================
+   PIUTANG / UTANG / MODAL
+   ========================================================= */
+
+#halaman-piutang,
+#halaman-utang,
+#halaman-modal {
+    padding-bottom: 30px;
+}
+
+#halaman-piutang .saldo-card,
+#halaman-utang .saldo-card,
+#halaman-modal .total-modal-card {
+    max-width: 520px;
+    margin-bottom: 20px;
+}
+
+#halaman-piutang .form-piutang,
+#halaman-utang .form-utang,
+#halaman-modal .form-modal {
+    max-width: 1100px;
+    margin-bottom: 25px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+#halaman-piutang h3,
+#halaman-utang h3,
+#halaman-modal h3 {
+    font-size: 17px;
+}
+
+#halaman-piutang .form-aksi,
+#halaman-utang .form-aksi,
+#halaman-modal .form-aksi {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#halaman-piutang .form-aksi button,
+#halaman-utang .form-aksi button,
+#halaman-modal .form-aksi button {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+/* =========================================================
+   LAPORAN
+   ========================================================= */
+
+#halaman-laporan {
+    padding-bottom: 30px;
+}
+
+.form-laporan {
+    max-width: 100%;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.form-laporan form {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto;
+    align-items: end;
+    gap: 16px;
+}
+
+.form-laporan .form-group {
+    margin-bottom: 0;
+}
+
+.form-laporan .btn-simpan,
+.form-laporan button {
+    width: auto;
+    min-width: 150px;
+}
+
+.menu-laporan {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.menu-laporan button,
+.kartu-laporan {
+    min-height: 62px;
+    padding: 14px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.menu-laporan button:hover {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+#area-laporan {
+    width: 100%;
+}
+
+.laporan-ringkasan {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.laporan-summary-card {
+    min-height: 100px;
+    padding: 17px;
+    border-radius: 11px;
+}
+
+.laporan-section {
+    margin-top: 20px;
+}
+
+.laporan-table {
+    min-width: 100%;
+    font-size: 13px;
+}
+
+/* =========================================================
+   NERACA
+   ========================================================= */
+
+.neraca-section {
+    margin-bottom: 20px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.neraca-table {
+    width: 100%;
+    min-width: 760px;
+    font-size: 13px;
+}
+
+.neraca-table td {
+    padding: 10px 12px;
+}
+
+.neraca-table td.nominal {
+    width: 190px;
+    min-width: 190px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.neraca-balance {
+    max-width: 900px;
+}
+
+/* =========================================================
+   TUTUP BUKU
+   ========================================================= */
+
+#halaman-tutup-buku {
+    padding-bottom: 30px;
+}
+
+#halaman-tutup-buku .form-laporan,
+#halaman-tutup-buku .form-group {
+    max-width: 1100px;
+}
+
+#halaman-tutup-buku .ringkasan-laba-rugi,
+#halaman-tutup-buku .hasil-tutup-buku {
+    max-width: 1200px;
+}
+
+/* =========================================================
+   MASTER DATA
+   ========================================================= */
+
+#halaman-master-data {
+    padding-bottom: 30px;
+}
+
+.info-master-data {
+    max-width: 100%;
+    padding: 17px 20px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.menu-master-data {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+    gap: 15px;
+}
+
+.item-master-data {
+    min-height: 82px;
+    padding: 17px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: 11px;
+    box-shadow: var(--shadow);
+}
+
+.icon-master-data {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+}
+
+#master-data-content {
+    margin-top: 25px;
+}
+
+/* =========================================================
+   ASET
+   ========================================================= */
+
+.form-aset {
+    max-width: 1100px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid var(--warna-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+#daftar-aset {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabel-aset {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.status-aset,
+.status-modal,
+.status-piutang {
+    white-space: nowrap;
+}
+
+/* =========================================================
+   TABEL UTANG
+   ========================================================= */
+
+#halaman-utang .form-utang {
+    max-width: 1100px;
+}
+
+#halaman-utang .tabel-utang-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#halaman-utang .tabel-utang {
+    min-width: 950px;
+}
+
+/* =========================================================
+   TOMBOL AKSI
+   ========================================================= */
+
+.aksi {
+    white-space: nowrap;
+}
+
+.aksi button,
+.btn-edit,
+.btn-hapus,
+.btn-edit-pemasukan,
+.btn-hapus-pemasukan,
+.btn-edit-modal,
+.btn-hapus-modal,
+.btn-edit-utang,
+.btn-hapus-utang,
+.btn-bayar-utang {
+    min-height: 34px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.btn-edit,
+.btn-edit-pemasukan,
+.btn-edit-modal,
+.btn-edit-utang {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+}
+
+.btn-edit:hover,
+.btn-edit-pemasukan:hover,
+.btn-edit-modal:hover,
+.btn-edit-utang:hover {
+    background: #dbeafe;
+}
+
+.btn-hapus,
+.btn-hapus-pemasukan,
+.btn-hapus-modal,
+.btn-hapus-utang {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.btn-hapus:hover,
+.btn-hapus-pemasukan:hover,
+.btn-hapus-modal:hover,
+.btn-hapus-utang:hover {
+    background: #fee2e2;
+}
+
+/* =========================================================
+   CETAK
+   ========================================================= */
+
+.btn-cetak-laporan {
+    min-height: 40px;
+    padding: 9px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    padding: 25px 30px;
+    background: #ffffff;
+    border-top: 1px solid var(--warna-border);
+    font-size: 12px;
+}
+
+/* =========================================================
+   DESKTOP BESAR
+   ========================================================= */
+
+@media (min-width: 1200px) {
+    .content {
+        padding-left: 38px;
+        padding-right: 38px;
+    }
+
+    .saldo-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .form-transaksi.aktif,
+    .form-piutang,
+    .form-utang,
+    .form-modal,
+    .form-aset {
+        max-width: 1180px;
+    }
+}
+
+/* =========================================================
+   LAPTOP / DESKTOP KECIL
+   ========================================================= */
+
+@media (min-width: 769px) and (max-width: 1100px) {
+    .content {
+        padding: 22px;
+    }
+
+    .saldo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .unit-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .menu-laporan {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .menu-master-data {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .laporan-ringkasan {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-laporan form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-laporan form > *:last-child {
+        grid-column: 1 / -1;
+        justify-self: start;
+    }
+}
+
+/* =========================================================
+   TABLET / HP
+   =========================================================
+   CSS lama tetap menjadi dasar responsive.
+   Override berikut hanya memastikan desktop rules di atas
+   tidak memaksa form 2 kolom pada layar kecil.
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .app {
+        max-width: 100%;
+        box-shadow: none;
+    }
+
+    .header {
+        padding: 18px 15px;
+        text-align: center;
+    }
+
+    .header h1 {
+        font-size: 21px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .saldo-grid,
+    .unit-list,
+    .menu-grid,
+    .menu-laporan,
+    .menu-master-data,
+    .laporan-ringkasan {
+        grid-template-columns: 1fr;
+    }
+
+    .transaksi-menu {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .form-transaksi,
+    .form-piutang,
+    .form-utang,
+    .form-modal,
+    .form-aset {
+        padding: 16px;
+    }
+
+    .form-transaksi form,
+    .form-piutang form,
+    .form-utang form,
+    .form-modal form,
+    .form-aset form,
+    .form-laporan form {
+        grid-template-columns: 1fr;
+    }
+
+    .form-transaksi form > .form-group:last-child,
+    .form-piutang form > .form-group:last-child,
+    .form-utang form > .form-group:last-child,
+    .form-modal form > .form-group:last-child,
+    .form-aset form > .form-group:last-child,
+    .form-laporan form > *:last-child {
+        grid-column: auto;
+    }
+
+    .form-transaksi form .btn-simpan,
+    .form-piutang form .btn-simpan,
+    .form-utang form .btn-simpan,
+    .form-modal form .btn-simpan,
+    .form-aset form .btn-simpan {
+        grid-column: auto;
+        width: 100%;
+    }
+
+    .form-laporan .btn-simpan,
+    .form-laporan button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   FINAL DESKTOP FULLSCREEN OVERRIDE
+   KEUANGAN BUMDES SUMBER REJEKI
+   =========================================================
+   Tujuan:
+   - Menghilangkan batas 430px / 1500px pada desktop.
+   - Memakai seluruh lebar layar monitor.
+   - Form, kartu, menu, tabel, laporan dan master data
+     menggunakan ruang desktop secara maksimal.
+   - Tidak mengubah HTML, JavaScript, Firebase, ID atau class.
+   - Responsive mobile tetap mengikuti blok @media max-width: 768px.
+   ========================================================= */
+
+@media (min-width: 769px) {
+
+    html,
+    body {
+        width: 100%;
+        min-width: 769px;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    body {
+        background: #f1f5f9;
+    }
+
+    .app {
+        width: 100%;
+        max-width: none !important;
+        min-width: 0;
+        min-height: 100vh;
+        margin: 0;
+        background: #ffffff;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .header {
+        width: 100%;
+        min-height: 92px;
+        padding: 22px 42px;
+        text-align: left;
+    }
+
+    .header h1 {
+        font-size: 27px;
+    }
+
+    .header p {
+        font-size: 14px;
+    }
+
+    .content {
+        width: 100%;
+        max-width: none;
+        padding: 30px 42px 45px;
+        background: #f1f5f9;
+    }
+
+    /* Semua halaman mengikuti lebar konten */
+    .halaman {
+        width: 100%;
+        max-width: none !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Menu utama memenuhi lebar layar */
+    .menu-grid {
+        width: 100%;
+        grid-template-columns: repeat(6, minmax(130px, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .menu-grid button {
+        width: 100%;
+        min-height: 70px;
+        padding: 15px 12px;
+    }
+
+    /* Dashboard */
+    .periode {
+        width: 100%;
+        min-height: 54px;
+        padding: 15px 20px;
+        margin-bottom: 18px;
+    }
+
+    .saldo-grid {
+        width: 100%;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 18px;
+    }
+
+    .card {
+        width: 100%;
+        min-height: 118px;
+        padding: 22px;
+    }
+
+    .card strong {
+        font-size: 22px;
+    }
+
+    .laba-card {
+        width: 100%;
+        min-height: 105px;
+        padding: 23px 25px;
+    }
+
+    .laba-card strong {
+        font-size: 27px;
+    }
+
+    .unit-list {
+        width: 100%;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    /* Judul halaman */
+    .halaman > h2,
+    #halaman-piutang h2,
+    #halaman-utang h2,
+    #halaman-modal h2,
+    #halaman-laporan h2 {
+        font-size: 24px;
+        margin-bottom: 22px;
+    }
+
+    /* Transaksi */
+    .transaksi-menu {
+        width: 100%;
+        grid-template-columns: repeat(3, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .transaksi-menu button {
+        min-height: 54px;
+    }
+
+    .form-transaksi,
+    .form-piutang,
+    .form-utang,
+    .form-modal,
+    .form-aset {
+        width: 100%;
+        max-width: none !important;
+        margin-bottom: 26px;
+        padding: 25px;
+    }
+
+    .form-transaksi form,
+    .form-piutang form,
+    .form-utang form,
+    .form-modal form,
+    .form-aset form {
+        width: 100%;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 18px 22px;
+    }
+
+    .form-transaksi form > .form-group:last-child,
+    .form-piutang form > .form-group:last-child,
+    .form-utang form > .form-group:last-child,
+    .form-modal form > .form-group:last-child,
+    .form-aset form > .form-group:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        min-height: 45px;
+    }
+
+    .form-group textarea {
+        min-height: 105px;
+    }
+
+    .form-transaksi form .btn-simpan,
+    .form-piutang form .btn-simpan,
+    .form-utang form .btn-simpan,
+    .form-modal form .btn-simpan,
+    .form-aset form .btn-simpan {
+        grid-column: 1 / -1;
+        justify-self: start;
+        width: auto;
+        min-width: 180px;
+    }
+
+    /* Total */
+    .total-pemasukan,
+    .total-pengeluaran,
+    .total-transfer {
+        width: 100%;
+        min-height: 58px;
+        padding: 15px 20px;
+    }
+
+    /* Tabel benar-benar memakai lebar layar.
+       Min-width tetap dipertahankan untuk kolom yang banyak. */
+    .tabel-scroll,
+    .table-responsive,
+    .tabel-utang-scroll,
+    #daftar-kas,
+    #daftar-bank,
+    #daftar-dana,
+    #daftar-aset {
+        width: 100%;
+        max-width: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .tabel-pemasukan,
+    .tabel-pengeluaran,
+    .tabel-transfer,
+    .tabel-kas,
+    .tabel-bank,
+    .tabel-dana,
+    .tabel-modal,
+    .tabel-utang,
+    .tabel-aset,
+    .tabel-data,
+    .tabel-laporan,
+    .neraca-table {
+        width: 100%;
+    }
+
+    .tabel-pemasukan,
+    .tabel-pengeluaran,
+    .tabel-transfer,
+    .tabel-kas,
+    .tabel-bank,
+    .tabel-dana,
+    .tabel-modal,
+    .tabel-utang,
+    .tabel-aset,
+    .tabel-data {
+        min-width: 900px;
+    }
+
+    .tabel-pemasukan th,
+    .tabel-pemasukan td,
+    .tabel-pengeluaran th,
+    .tabel-pengeluaran td,
+    .tabel-transfer th,
+    .tabel-transfer td,
+    .tabel-kas th,
+    .tabel-kas td,
+    .tabel-bank th,
+    .tabel-bank td,
+    .tabel-dana th,
+    .tabel-dana td,
+    .tabel-modal th,
+    .tabel-modal td,
+    .tabel-utang th,
+    .tabel-utang td,
+    .tabel-aset th,
+    .tabel-aset td,
+    .tabel-data th,
+    .tabel-data td {
+        padding: 12px 14px;
+    }
+
+    /* Kas / Bank / DANA */
+    #halaman-kas .saldo-card,
+    #halaman-bank .saldo-card,
+    #halaman-dana .saldo-card {
+        width: 100%;
+        min-height: 105px;
+        padding: 22px 25px;
+    }
+
+    #halaman-kas .saldo-card strong,
+    #halaman-bank .saldo-card strong,
+    #halaman-dana .saldo-card strong {
+        font-size: 27px;
+    }
+
+    /* Piutang / Utang / Modal */
+    #halaman-piutang .saldo-card,
+    #halaman-utang .saldo-card,
+    #halaman-modal .total-modal-card {
+        width: 100%;
+        max-width: none;
+    }
+
+    #halaman-piutang .form-aksi,
+    #halaman-utang .form-aksi,
+    #halaman-modal .form-aksi {
+        width: 100%;
+    }
+
+    /* Laporan */
+    #halaman-laporan {
+        width: 100%;
+    }
+
+    .form-laporan {
+        width: 100%;
+        max-width: none;
+        padding: 22px 25px;
+    }
+
+    .form-laporan form {
+        width: 100%;
+        grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto;
+        gap: 18px;
+    }
+
+    .menu-laporan {
+        width: 100%;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .laporan-ringkasan {
+        width: 100%;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 18px;
+    }
+
+    .laporan-summary-card {
+        width: 100%;
+        min-height: 110px;
+        padding: 19px;
+    }
+
+    .laporan-section,
+    #area-laporan {
+        width: 100%;
+        max-width: none;
+    }
+
+    .laporan-table {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    /* Neraca */
+    .neraca-section {
+        width: 100%;
+        max-width: none;
+    }
+
+    .neraca-table {
+        min-width: 850px;
+    }
+
+    .neraca-table td.nominal {
+        width: 220px;
+        min-width: 220px;
+    }
+
+    .neraca-balance {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Tutup buku */
+    #halaman-tutup-buku,
+    #halaman-tutup-buku .form-laporan,
+    #halaman-tutup-buku .ringkasan-laba-rugi,
+    #halaman-tutup-buku .hasil-tutup-buku {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Master data */
+    #halaman-master-data,
+    .info-master-data,
+    #master-data-content {
+        width: 100%;
+        max-width: none;
+    }
+
+    .menu-master-data {
+        width: 100%;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .item-master-data {
+        width: 100%;
+        min-height: 90px;
+    }
+
+    /* Aset */
+    .form-aset {
+        width: 100%;
+        max-width: none;
+    }
+
+    .tabel-aset {
+        min-width: 1100px;
+    }
+
+    /* Footer */
+    footer {
+        width: 100%;
+        padding: 25px 42px;
+    }
+}
+
+/* Monitor sangat lebar */
+@media (min-width: 1600px) {
+    .header {
+        padding-left: 55px;
+        padding-right: 55px;
+    }
+
+    .content {
+        padding-left: 55px;
+        padding-right: 55px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(8, minmax(130px, 1fr));
+    }
+
+    .unit-list {
+        grid-template-columns: repeat(4, minmax(220px, 1fr));
+    }
+
+    .menu-master-data {
+        grid-template-columns: repeat(4, minmax(220px, 1fr));
+    }
+}
+
+/* =========================================================
+   CETAK LAPORAN
+   ========================================================= */
+
+@media print {
+    html,
+    body,
+    .app,
+    .content {
+        background: #ffffff !important;
+    }
+
+    .app {
+        max-width: none;
+        box-shadow: none;
+    }
+
+    .header {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border-bottom: 1px solid #999999;
+    }
+
+    .content {
+        padding: 10px;
+    }
+
+    .btn-kembali,
+    .btn-cetak-laporan,
+    .menu-laporan,
+    .menu-grid,
+    .transaksi-menu {
+        display: none !important;
+    }
+
+    .laporan-section,
+    .neraca-section,
+    .tabel-scroll,
+    .table-responsive {
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+}
+
+/* =========================================================
+   DESKTOP MODE
+   Mulai 1024px = tampilan komputer
+   ========================================================= */
+
+@media (min-width: 1024px) {
+
+    html,
+    body {
+        width: 100%;
+        min-width: 1024px;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-size: 14px;
+        background: #f3f6f4;
+    }
+
+    /* =========================
+       CONTAINER UTAMA
+       ========================= */
+
+    .app {
+        width: 100%;
+        max-width: none !important;
+        min-height: 100vh;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    header {
+        width: 100%;
+        min-height: 70px;
+        padding: 16px 30px;
+        box-sizing: border-box;
+    }
+
+    /* =========================
+       KONTEN
+       ========================= */
+
+    main,
+    .content,
+    .container {
+        width: 100%;
+        max-width: none !important;
+        box-sizing: border-box;
+    }
+
+    main {
+        padding: 24px 30px 40px;
+    }
+
+    section {
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 24px;
+    }
+
+    /* =========================
+       JUDUL HALAMAN
+       ========================= */
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    h3 {
+        font-size: 17px;
+    }
+
+    /* =========================
+       FORM
+       ========================= */
+
+    .form-group,
+    .form-row {
+        box-sizing: border-box;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    input,
+    select,
+    textarea {
+        min-height: 42px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    /* =========================
+       TABEL
+       ========================= */
+
+    table {
+        width: 100%;
+        min-width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 11px 14px;
+        font-size: 14px;
+    }
+
+    /* =========================
+       MENU LAPORAN
+       ========================= */
+
+    .menu-laporan {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(8, minmax(110px, 1fr));
+        gap: 12px;
+        padding: 18px;
+        margin: 20px 0;
+        box-sizing: border-box;
+
+        background: #ffffff;
+        border: 1px solid #dfe7e2;
+        border-radius: 10px;
+    }
+
+    .menu-laporan button {
+        width: 100%;
+        min-height: 48px;
+        padding: 10px 14px;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        border: 1px solid #d5dfd9;
+        border-radius: 8px;
+        background: #f7faf8;
+        cursor: pointer;
+    }
+
+    .menu-laporan button:hover {
+        background: #198754;
+        color: #ffffff;
+        border-color: #198754;
+    }
+
+    /* =========================
+       AREA LAPORAN
+       ========================= */
+
+    #area-laporan {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    #area-laporan .kartu-laporan {
+        width: 100%;
+        max-width: none !important;
+        box-sizing: border-box;
+
+        padding: 28px 30px 32px;
+        margin-bottom: 24px;
+
+        background: #ffffff;
+        border: 1px solid #dfe7e2;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    /* =========================
+       HEADER LAPORAN
+       ========================= */
+
+    #area-laporan .header-laporan {
+        width: 100%;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+
+        border-bottom: 2px solid #198754;
+    }
+
+    /* =========================
+       RINGKASAN
+       ========================= */
+
+    .ringkasan-laporan {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+    }
+
+    /* =========================
+       TOMBOL
+       ========================= */
+
+    button {
+        min-height: 40px;
+        padding: 9px 16px;
+        font-size: 14px;
+    }
+
+    /* =========================
+       MODAL
+       ========================= */
+
+    .modal-content {
+        width: 90%;
+        max-width: 900px;
+    }
+}
+
+
+/* =========================================================
+   DESKTOP BESAR
+   ========================================================= */
+
+@media (min-width: 1400px) {
+
+    main {
+        padding: 30px 45px 50px;
+    }
+
+    header {
+        padding-left: 45px;
+        padding-right: 45px;
+    }
+
+    .menu-laporan {
+        gap: 14px;
+        padding: 20px;
+    }
+
+    .menu-laporan button {
+        min-height: 52px;
+        font-size: 15px;
+    }
+
+    #area-laporan .kartu-laporan {
+        padding: 32px 36px 40px;
+    }
+
+    th,
+    td {
+        padding: 13px 16px;
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================================
+   LAPTOP / DESKTOP KECIL
+   769–1023px
+   ========================================================= */
+
+@media (min-width: 769px) and (max-width: 1023px) {
+
+    .app {
+        width: 100%;
+        max-width: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    .menu-laporan {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .ringkasan-laporan {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =========================================================
+   FIX TOMBOL MENU LAPORAN
+   NORMAL = HIJAU + TULISAN PUTIH
+   ========================================================= */
+
+.menu-laporan button,
+.menu-laporan button[type="button"] {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+
+    border: 1px solid #198754 !important;
+    border-radius: 8px;
+
+    min-height: 48px;
+    padding: 10px 16px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Saat kursor diarahkan */
+.menu-laporan button:hover,
+.menu-laporan button[type="button"]:hover {
+    background-color: #157347 !important;
+    color: #ffffff !important;
+    border-color: #157347 !important;
+}
+
+/* Saat ditekan */
+.menu-laporan button:active,
+.menu-laporan button[type="button"]:active {
+    background-color: #146c43 !important;
+    color: #ffffff !important;
+}
