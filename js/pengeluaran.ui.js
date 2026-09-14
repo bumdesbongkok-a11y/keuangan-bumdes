@@ -934,14 +934,310 @@ async function tampilPengeluaran(data) {
 
 async function loadDanTampilPengeluaran() {
 
+    const mulaiInput =
+        document.getElementById("filterPengeluaranMulai");
+
+    const akhirInput =
+        document.getElementById("filterPengeluaranAkhir");
+
+
+    // =====================================
+    // SET BULAN AKTIF
+    // =====================================
+
+    if (mulaiInput && akhirInput) {
+
+        const sekarang = new Date();
+
+        const tahun =
+            sekarang.getFullYear();
+
+        const bulan =
+            sekarang.getMonth();
+
+
+        // Tanggal pertama bulan aktif
+        const tanggalMulai =
+            new Date(
+                tahun,
+                bulan,
+                1
+            );
+
+
+        // Tanggal terakhir bulan aktif
+        const tanggalAkhir =
+            new Date(
+                tahun,
+                bulan + 1,
+                0
+            );
+
+
+        function formatTanggalFilter(tanggal) {
+
+            const yyyy =
+                tanggal.getFullYear();
+
+            const mm =
+                String(
+                    tanggal.getMonth() + 1
+                ).padStart(2, "0");
+
+            const dd =
+                String(
+                    tanggal.getDate()
+                ).padStart(2, "0");
+
+            return `${yyyy}-${mm}-${dd}`;
+
+        }
+
+
+        mulaiInput.value =
+            formatTanggalFilter(
+                tanggalMulai
+            );
+
+
+        akhirInput.value =
+            formatTanggalFilter(
+                tanggalAkhir
+            );
+
+    }
+
+
+    // =====================================
+    // AMBIL DATA
+    // =====================================
+
     const data =
         await loadPengeluaranFirebase();
 
 
-    await tampilPengeluaran(data);
+    // =====================================
+    // FILTER BULAN AKTIF
+    // =====================================
+
+    const mulai =
+        mulaiInput
+            ? mulaiInput.value
+            : "";
+
+
+    const akhir =
+        akhirInput
+            ? akhirInput.value
+            : "";
+
+
+    let hasil = data;
+
+
+    if (mulai && akhir) {
+
+        hasil =
+            data.filter(function(item) {
+
+                return (
+                    item.tanggal >= mulai &&
+                    item.tanggal <= akhir
+                );
+
+            });
+
+    }
+
+
+    // =====================================
+    // TAMPILKAN
+    // =====================================
+
+    await tampilPengeluaran(hasil);
 
 }
 
+// =========================================
+// FILTER TANGGAL PENGELUARAN
+// =========================================
+
+async function filterPengeluaranTanggal() {
+
+    const mulaiInput =
+        document.getElementById(
+            "filterPengeluaranMulai"
+        );
+
+    const akhirInput =
+        document.getElementById(
+            "filterPengeluaranAkhir"
+        );
+
+
+    if (!mulaiInput || !akhirInput) {
+        return;
+    }
+
+
+    const mulai =
+        mulaiInput.value;
+
+    const akhir =
+        akhirInput.value;
+
+
+    // =====================================
+    // VALIDASI
+    // =====================================
+
+    if (!mulai || !akhir) {
+
+        alert(
+            "Silakan pilih tanggal mulai dan tanggal akhir."
+        );
+
+        return;
+
+    }
+
+
+    if (mulai > akhir) {
+
+        alert(
+            "Tanggal mulai tidak boleh lebih besar dari tanggal akhir."
+        );
+
+        return;
+
+    }
+
+
+    // =====================================
+    // AMBIL DATA
+    // =====================================
+
+    const data =
+        await loadPengeluaranFirebase();
+
+
+    // =====================================
+    // FILTER
+    // =====================================
+
+    const hasil =
+        (data || []).filter(function(item) {
+
+            return (
+                item.tanggal >= mulai &&
+                item.tanggal <= akhir
+            );
+
+        });
+
+
+    // =====================================
+    // TAMPILKAN HASIL
+    // =====================================
+
+    await tampilPengeluaran(hasil);
+
+}
+
+
+// =========================================
+// RESET FILTER PENGELUARAN
+// =========================================
+
+async function resetFilterPengeluaran() {
+
+    const mulaiInput =
+        document.getElementById(
+            "filterPengeluaranMulai"
+        );
+
+    const akhirInput =
+        document.getElementById(
+            "filterPengeluaranAkhir"
+        );
+
+
+    if (!mulaiInput || !akhirInput) {
+        return;
+    }
+
+
+    // =====================================
+    // KEMBALI KE BULAN AKTIF
+    // =====================================
+
+    const sekarang =
+        new Date();
+
+
+    const tahun =
+        sekarang.getFullYear();
+
+
+    const bulan =
+        sekarang.getMonth();
+
+
+    const tanggalMulai =
+        new Date(
+            tahun,
+            bulan,
+            1
+        );
+
+
+    const tanggalAkhir =
+        new Date(
+            tahun,
+            bulan + 1,
+            0
+        );
+
+
+    function formatTanggalFilter(tanggal) {
+
+        const yyyy =
+            tanggal.getFullYear();
+
+        const mm =
+            String(
+                tanggal.getMonth() + 1
+            ).padStart(2, "0");
+
+        const dd =
+            String(
+                tanggal.getDate()
+            ).padStart(2, "0");
+
+        return `${yyyy}-${mm}-${dd}`;
+
+    }
+
+
+    mulaiInput.value =
+        formatTanggalFilter(
+            tanggalMulai
+        );
+
+
+    akhirInput.value =
+        formatTanggalFilter(
+            tanggalAkhir
+        );
+
+
+    // =====================================
+    // TAMPILKAN DATA BULAN AKTIF
+    // =====================================
+
+    await loadDanTampilPengeluaran();
+
+}
 
 // =========================================
 // EDIT PENGELUARAN

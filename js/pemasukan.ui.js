@@ -680,10 +680,127 @@ async function tampilPemasukan(data) {
 
 async function loadDanTampilPemasukan() {
 
+    const mulaiInput =
+        document.getElementById("filterPemasukanMulai");
+
+    const akhirInput =
+        document.getElementById("filterPemasukanAkhir");
+
+
+    // =====================================
+    // SET BULAN AKTIF
+    // =====================================
+
+    if (mulaiInput && akhirInput) {
+
+        const sekarang = new Date();
+
+        const tahun =
+            sekarang.getFullYear();
+
+        const bulan =
+            sekarang.getMonth();
+
+
+        // Tanggal pertama bulan aktif
+        const tanggalMulai =
+            new Date(
+                tahun,
+                bulan,
+                1
+            );
+
+
+        // Tanggal terakhir bulan aktif
+        const tanggalAkhir =
+            new Date(
+                tahun,
+                bulan + 1,
+                0
+            );
+
+
+        function formatTanggalFilter(tanggal) {
+
+            const yyyy =
+                tanggal.getFullYear();
+
+            const mm =
+                String(
+                    tanggal.getMonth() + 1
+                ).padStart(2, "0");
+
+            const dd =
+                String(
+                    tanggal.getDate()
+                ).padStart(2, "0");
+
+            return `${yyyy}-${mm}-${dd}`;
+
+        }
+
+
+        mulaiInput.value =
+            formatTanggalFilter(
+                tanggalMulai
+            );
+
+
+        akhirInput.value =
+            formatTanggalFilter(
+                tanggalAkhir
+            );
+
+    }
+
+
+    // =====================================
+    // AMBIL DATA
+    // =====================================
+
     const data =
         await loadPemasukanFirebase();
 
-    tampilPemasukan(data);
+
+    // =====================================
+    // FILTER BULAN AKTIF
+    // =====================================
+
+    const mulai =
+        mulaiInput
+            ? mulaiInput.value
+            : "";
+
+
+    const akhir =
+        akhirInput
+            ? akhirInput.value
+            : "";
+
+
+    let hasil = data;
+
+
+    if (mulai && akhir) {
+
+        hasil =
+            data.filter(function(item) {
+
+                return (
+                    item.tanggal >= mulai &&
+                    item.tanggal <= akhir
+                );
+
+            });
+
+    }
+
+
+    // =====================================
+    // TAMPILKAN
+    // =====================================
+
+    tampilPemasukan(hasil);
 
 }
 
