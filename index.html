@@ -852,7 +852,57 @@
 >
     Simpan Pengeluaran
 </button>
+<!-- =========================================
+     FILTER TANGGAL PENGELUARAN
+     ========================================= -->
 
+<div class="filter-tanggal-pengeluaran">
+
+    <div class="form-group">
+        <label for="filterPengeluaranDari">
+            Dari Tanggal
+        </label>
+
+        <input
+            type="date"
+            id="filterPengeluaranMulai"
+        >
+    </div>
+
+
+    <div class="form-group">
+        <label for="filterPengeluaranSampai">
+            Sampai Tanggal
+        </label>
+
+        <input
+            type="date"
+            id="filterPengeluaranAkhir"
+        >
+    </div>
+
+
+    <div class="filter-buttons">
+
+        <button
+            type="button"
+            onclick="filterPengeluaranTanggal()"
+            class="btn-filter"
+        >
+            Tampilkan
+        </button>
+
+        <button
+            type="button"
+            onclick="resetFilterPengeluaran()"
+            class="btn-reset"
+        >
+            Reset
+        </button>
+
+    </div>
+
+</div>
 <!-- =========================================
      DAFTAR PENGELUARAN
      ========================================= -->
