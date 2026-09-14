@@ -1,242 +1,164 @@
-// =========================================
-// KAS UI
+// =========================================================
+// KAS BUMDES
 // KEUANGAN BUMDES SUMBER REJEKI
-// =========================================
+// =========================================================
 
 
-// =========================================
-// FORMAT NAMA UNTUK TAMPILAN KAS
-// =========================================
+// =========================================================
+// NAMA TAMPIL KAS
+// =========================================================
 
 function namaTampilKas(nilai) {
-
-    if (!nilai) {
-
-        return "-";
-
-    }
-
+    if (!nilai) return "-";
 
     const nama = {
+        KAS: "Kas",
+        BANK: "Bank",
+        DANA: "DANA",
 
-    KAS:
-        "Kas",
+        AYAM_PETELUR: "Ayam Petelur",
+        PENGELOLAAN_SAMPAH: "Pengelolaan Sampah",
+        BANK_SAMPAH: "Bank Sampah",
 
-    BANK:
-        "Bank",
+        4100: "Pendapatan Retribusi Sampah",
 
-    DANA:
-        "DANA",
+        4200: "Penjualan Telur",
+        4210: "Penjualan Ayam",
+        4220: "Penjualan Kotoran",
+        4230: "Pendapatan Lainnya Ayam Petelur",
 
-    AYAM_PETELUR:
-        "Ayam Petelur",
+        5100: "Beban Gaji",
+        5110: "Beban BBM",
+        5120: "Beban Perawatan",
+        5130: "Beban Operasional",
 
-    PENGELOLAAN_SAMPAH:
-        "Pengelolaan Sampah",
+        5200: "Beban Pakan",
+        5210: "Beban Vitamin & Obat",
+        5220: "Beban Gaji",
+        5230: "Beban Listrik",
+        5240: "Beban Air",
+        5250: "Beban Perawatan",
+        5260: "Beban Operasional",
+        5270: "Beban Penyusutan",
 
-    BANK_SAMPAH:
-        "Bank Sampah",
+        5300: "Beban Pembelian Sampah",
+        5310: "Beban Gaji",
+        5320: "Beban Operasional",
+        5330: "Beban Peralatan",
 
-    4100:
-        "Pendapatan Retribusi Sampah",
-
-    4200:
-        "Penjualan Telur",
-
-    4210:
-        "Penjualan Ayam",
-
-    4220:
-        "Penjualan Kotoran",
-
-    4230:
-        "Pendapatan Lainnya Ayam Petelur",
-
-    5100:
-        "Beban Gaji",
-
-    5110:
-        "Beban BBM",
-
-    5120:
-        "Beban Perawatan",
-
-    5130:
-        "Beban Operasional",
-
-    5200:
-        "Beban Pakan",
-
-    5210:
-        "Beban Vitamin & Obat",
-
-    5220:
-        "Beban Gaji",
-
-    5230:
-        "Beban Listrik",
-
-    5240:
-        "Beban Air",
-
-    5250:
-        "Beban Perawatan",
-
-    5260:
-        "Beban Operasional",
-
-    5270:
-        "Beban Penyusutan",
-
-    5300:
-        "Beban Pembelian Sampah",
-
-    5310:
-        "Beban Gaji",
-
-    5320:
-        "Beban Operasional",
-
-    5330:
-        "Beban Peralatan",
-
-    5400:
-        "Beban Affiliate",
-
-    5410:
-        "Beban Operasional Affiliate"
-
-};
-
+        5400: "Beban Affiliate",
+        5410: "Beban Operasional Affiliate"
+    };
 
     return nama[nilai] || nilai;
-
 }
 
-// =========================================
+
+// =========================================================
 // TAMPIL DATA KAS
-// =========================================
+// =========================================================
+//
+// data         = transaksi sesuai filter
+// saldoAwal    = saldo Kas sebelum tanggal mulai filter
+// saldoAktual  = saldo Kas keseluruhan / saldo sebenarnya
+//
+// =========================================================
 
-function tampilKas(data) {
+function tampilKas(
+    data,
+    saldoAwal = 0,
+    saldoAktual = 0
+) {
+    const area = document.getElementById("daftar-kas");
+    const saldoElement = document.getElementById("saldoKas");
 
-    const area =
-        document.getElementById(
-            "daftar-kas"
-        );
-
-    const saldoElement =
-        document.getElementById(
-            "saldoKas"
-        );
+    if (!area) return;
 
 
-    if (!area) {
+    // =====================================================
+    // SALDO KAS DI CARD
+    // =====================================================
+    //
+    // Tetap menampilkan saldo Kas sebenarnya,
+    // bukan saldo berdasarkan filter.
+    //
 
-        return;
-
+    if (saldoElement) {
+        saldoElement.textContent = formatRupiah(saldoAktual);
     }
 
 
-    // =====================================
-    // DATA KOSONG
-    // =====================================
+    // =====================================================
+    // JIKA TIDAK ADA DATA
+    // =====================================================
 
     if (!data || data.length === 0) {
-
-        if (saldoElement) {
-
-            saldoElement.textContent =
-                formatRupiah(0);
-
-        }
-
-
         area.innerHTML = `
-
             <p class="data-kosong">
-                Belum ada transaksi Kas.
+                Tidak ada transaksi Kas
+                pada periode yang dipilih.
             </p>
-
         `;
 
         return;
-
     }
 
 
-    // =====================================
-    // HITUNG SALDO
-    // =====================================
+    // =====================================================
+    // SALDO AWAL
+    // =====================================================
 
-    let saldo = 0;
+    let saldo = Number(saldoAwal) || 0;
 
     let totalMasuk = 0;
-
     let totalKeluar = 0;
 
 
-    let html = `
+    // =====================================================
+    // TABEL
+    // =====================================================
 
+    let html = `
         <div class="tabel-scroll">
 
             <table class="tabel-kas">
 
                 <thead>
-
                     <tr>
-
                         <th>Tanggal</th>
-
                         <th>Keterangan</th>
-
                         <th>Dari</th>
-
                         <th>Ke</th>
-
                         <th>Masuk</th>
-
                         <th>Keluar</th>
-
                         <th>Saldo</th>
-
                     </tr>
-
                 </thead>
 
                 <tbody>
-
     `;
 
 
-    // =====================================
-    // DATA SUDAH DIURUTKAN
-    // TERLAMA → TERBARU
-    // =====================================
+    // =====================================================
+    // DATA TRANSAKSI
+    // =====================================================
 
     data.forEach(function(item) {
 
-        const masuk =
-            Number(item.masuk) || 0;
+        const masuk = Number(item.masuk) || 0;
+        const keluar = Number(item.keluar) || 0;
 
 
-        const keluar =
-            Number(item.keluar) || 0;
+        // Hitung saldo berjalan
+        saldo += masuk - keluar;
 
 
-        saldo +=
-            masuk - keluar;
-
-
-        totalMasuk +=
-            masuk;
-
-
-        totalKeluar +=
-            keluar;
+        // Total periode
+        totalMasuk += masuk;
+        totalKeluar += keluar;
 
 
         html += `
-
             <tr>
 
                 <td>
@@ -248,26 +170,24 @@ function tampilKas(data) {
                 </td>
 
                 <td>
-					${namaTampilKas(item.dari)}
-				</td>
+                    ${namaTampilKas(item.dari)}
+                </td>
 
                 <td>
-					${namaTampilKas(item.ke)}
-				</td>
+                    ${namaTampilKas(item.ke)}
+                </td>
 
                 <td class="nominal">
-                    ${
-                        masuk > 0
-                            ? formatRupiah(masuk)
-                            : "-"
+                    ${masuk > 0
+                        ? formatRupiah(masuk)
+                        : "-"
                     }
                 </td>
 
                 <td class="nominal">
-                    ${
-                        keluar > 0
-                            ? formatRupiah(keluar)
-                            : "-"
+                    ${keluar > 0
+                        ? formatRupiah(keluar)
+                        : "-"
                     }
                 </td>
 
@@ -276,14 +196,15 @@ function tampilKas(data) {
                 </td>
 
             </tr>
-
         `;
-
     });
 
 
-    html += `
+    // =====================================================
+    // TOTAL
+    // =====================================================
 
+    html += `
                 </tbody>
 
                 <tfoot>
@@ -291,7 +212,7 @@ function tampilKas(data) {
                     <tr>
 
                         <th colspan="4">
-                            Total
+                            Total Periode
                         </th>
 
                         <th class="nominal">
@@ -313,38 +234,344 @@ function tampilKas(data) {
             </table>
 
         </div>
-
     `;
 
 
-    area.innerHTML =
-        html;
-
-
-    // =====================================
-    // SALDO UTAMA
-    // =====================================
-
-    if (saldoElement) {
-
-        saldoElement.textContent =
-            formatRupiah(saldo);
-
-    }
-
+    area.innerHTML = html;
 }
 
 
-// =========================================
-// LOAD DAN TAMPILKAN KAS
-// =========================================
+// =========================================================
+// LOAD DAN TAMPIL KAS
+// =========================================================
 
 async function loadDanTampilKas() {
 
-    const data =
-        await loadKasFirebase();
+    // =====================================================
+    // AMBIL SEMUA DATA KAS
+    // =====================================================
+
+    const data = await loadKasFirebase();
+
+    const semuaData = data || [];
 
 
-    tampilKas(data);
+    // =====================================================
+    // HITUNG SALDO KAS AKTUAL
+    // =====================================================
+    //
+    // Saldo ini tidak terpengaruh filter tanggal.
+    //
 
+    const saldoAktual = hitungSaldoKas(semuaData);
+
+
+    // =====================================================
+    // AMBIL INPUT FILTER
+    // =====================================================
+
+    const mulaiInput =
+        document.getElementById("filterKasMulai");
+
+    const akhirInput =
+        document.getElementById("filterKasAkhir");
+
+
+    // =====================================================
+    // DEFAULT FILTER = BULAN BERJALAN
+    // =====================================================
+
+    if (
+        mulaiInput &&
+        akhirInput &&
+        (!mulaiInput.value || !akhirInput.value)
+    ) {
+
+        const sekarang = new Date();
+
+        const tahun = sekarang.getFullYear();
+        const bulan = sekarang.getMonth();
+
+
+        // Tanggal pertama bulan
+        const tanggalMulai =
+            new Date(tahun, bulan, 1);
+
+
+        // Tanggal terakhir bulan
+        const tanggalAkhir =
+            new Date(tahun, bulan + 1, 0);
+
+
+        function formatTanggalFilter(tanggal) {
+
+            const yyyy =
+                tanggal.getFullYear();
+
+            const mm =
+                String(
+                    tanggal.getMonth() + 1
+                ).padStart(2, "0");
+
+            const dd =
+                String(
+                    tanggal.getDate()
+                ).padStart(2, "0");
+
+            return yyyy + "-" + mm + "-" + dd;
+        }
+
+
+        mulaiInput.value =
+            formatTanggalFilter(tanggalMulai);
+
+        akhirInput.value =
+            formatTanggalFilter(tanggalAkhir);
+    }
+
+
+    // =====================================================
+    // NILAI FILTER
+    // =====================================================
+
+    const mulai =
+        mulaiInput
+            ? mulaiInput.value
+            : "";
+
+    const akhir =
+        akhirInput
+            ? akhirInput.value
+            : "";
+
+
+    // =====================================================
+    // FILTER DATA
+    // =====================================================
+
+    let hasil = semuaData;
+
+
+    if (mulai && akhir) {
+
+        hasil = semuaData.filter(function(item) {
+
+            return (
+                item.tanggal >= mulai &&
+                item.tanggal <= akhir
+            );
+
+        });
+    }
+
+
+    // =====================================================
+    // URUTKAN TANGGAL
+    // TERTUA → TERBARU
+    // =====================================================
+
+    hasil.sort(function(a, b) {
+
+        return String(
+            a.tanggal || ""
+        ).localeCompare(
+            String(
+                b.tanggal || ""
+            )
+        );
+
+    });
+
+
+    // =====================================================
+    // HITUNG SALDO AWAL SEBELUM PERIODE
+    // =====================================================
+
+    let saldoAwal = 0;
+
+
+    if (mulai) {
+
+        semuaData.forEach(function(item) {
+
+            if (item.tanggal < mulai) {
+
+                const masuk =
+                    Number(item.masuk) || 0;
+
+                const keluar =
+                    Number(item.keluar) || 0;
+
+
+                saldoAwal +=
+                    masuk - keluar;
+            }
+
+        });
+    }
+
+
+    // =====================================================
+    // TAMPILKAN
+    // =====================================================
+
+    tampilKas(
+        hasil,
+        saldoAwal,
+        saldoAktual
+    );
+}
+
+
+// =========================================================
+// FILTER KAS BERDASARKAN TANGGAL
+// =========================================================
+
+async function filterKasTanggal() {
+
+    const mulaiInput =
+        document.getElementById(
+            "filterKasMulai"
+        );
+
+    const akhirInput =
+        document.getElementById(
+            "filterKasAkhir"
+        );
+
+
+    if (!mulaiInput || !akhirInput) {
+        return;
+    }
+
+
+    const mulai =
+        mulaiInput.value;
+
+    const akhir =
+        akhirInput.value;
+
+
+    // =====================================================
+    // VALIDASI
+    // =====================================================
+
+    if (!mulai || !akhir) {
+
+        alert(
+            "Silakan pilih tanggal mulai dan tanggal akhir."
+        );
+
+        return;
+    }
+
+
+    if (mulai > akhir) {
+
+        alert(
+            "Tanggal mulai tidak boleh lebih besar dari tanggal akhir."
+        );
+
+        return;
+    }
+
+
+    // =====================================================
+    // TAMPILKAN DATA
+    // =====================================================
+
+    await loadDanTampilKas();
+}
+
+
+// =========================================================
+// RESET FILTER KAS
+// =========================================================
+
+async function resetFilterKas() {
+
+    const mulaiInput =
+        document.getElementById(
+            "filterKasMulai"
+        );
+
+    const akhirInput =
+        document.getElementById(
+            "filterKasAkhir"
+        );
+
+
+    if (!mulaiInput || !akhirInput) {
+        return;
+    }
+
+
+    // =====================================================
+    // BULAN BERJALAN
+    // =====================================================
+
+    const sekarang = new Date();
+
+    const tahun =
+        sekarang.getFullYear();
+
+    const bulan =
+        sekarang.getMonth();
+
+
+    const tanggalMulai =
+        new Date(
+            tahun,
+            bulan,
+            1
+        );
+
+
+    const tanggalAkhir =
+        new Date(
+            tahun,
+            bulan + 1,
+            0
+        );
+
+
+    function formatTanggalFilter(tanggal) {
+
+        const yyyy =
+            tanggal.getFullYear();
+
+        const mm =
+            String(
+                tanggal.getMonth() + 1
+            ).padStart(2, "0");
+
+        const dd =
+            String(
+                tanggal.getDate()
+            ).padStart(2, "0");
+
+        return yyyy + "-" + mm + "-" + dd;
+    }
+
+
+    // =====================================================
+    // SET FILTER KEMBALI KE BULAN INI
+    // =====================================================
+
+    mulaiInput.value =
+        formatTanggalFilter(
+            tanggalMulai
+        );
+
+    akhirInput.value =
+        formatTanggalFilter(
+            tanggalAkhir
+        );
+
+
+    // =====================================================
+    // TAMPILKAN KEMBALI
+    // =====================================================
+
+    await loadDanTampilKas();
 }
