@@ -1131,6 +1131,7 @@
         ← Kembali
     </button>
 
+
     <h2>Kas BUMDes</h2>
 
 
@@ -1155,6 +1156,67 @@
         Mutasi Kas
     </h3>
 
+
+    <!-- =========================================
+         FILTER TANGGAL KAS
+         ========================================= -->
+
+    <div class="filter-tanggal-kas">
+
+        <div class="form-group">
+
+            <label for="filterKasMulai">
+                Dari Tanggal
+            </label>
+
+            <input
+                type="date"
+                id="filterKasMulai"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="filterKasAkhir">
+                Sampai Tanggal
+            </label>
+
+            <input
+                type="date"
+                id="filterKasAkhir"
+            >
+
+        </div>
+
+
+        <div class="filter-buttons">
+
+            <button
+                type="button"
+                onclick="filterKasTanggal()"
+                class="btn-filter"
+            >
+                Tampilkan
+            </button>
+
+
+            <button
+                type="button"
+                onclick="resetFilterKas()"
+                class="btn-reset"
+            >
+                Reset
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- DAFTAR MUTASI KAS -->
+
     <div id="daftar-kas">
 
         <p class="data-kosong">
@@ -1164,7 +1226,6 @@
     </div>
 
 </section>
-
 <!-- =========================================
      HALAMAN BANK
      ========================================= -->
