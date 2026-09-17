@@ -1293,6 +1293,12 @@ async function simpanPelanggan() {
             );
 
 
+        const cakupanElement =
+            document.getElementById(
+                "pelangganCakupan"
+            );
+
+
         const unitElement =
             document.getElementById(
                 "pelangganUnitUsaha"
@@ -1348,6 +1354,17 @@ async function simpanPelanggan() {
                 jenisElement
                     ? jenisElement.value
                     : "perorangan",
+
+            // =================================
+            // KETERIKATAN WILAYAH
+            // =================================
+            // Default pelanggan lama / normal
+            // adalah terikat RT / RW
+
+            cakupan:
+                cakupanElement
+                    ? cakupanElement.value
+                    : "wilayah",
 
             unitUsaha:
                 unitElement
@@ -1448,6 +1465,12 @@ async function updatePelanggan(id) {
             );
 
 
+        const cakupanElement =
+            document.getElementById(
+                "pelangganCakupan"
+            );
+
+
         const unitElement =
             document.getElementById(
                 "pelangganUnitUsaha"
@@ -1502,6 +1525,17 @@ async function updatePelanggan(id) {
                     ? jenisElement.value
                     : "perorangan",
 
+            // =================================
+            // KETERIKATAN WILAYAH
+            // =================================
+            // Jika data lama belum mempunyai
+            // cakupan, tetap dianggap wilayah.
+
+            cakupan:
+                cakupanElement
+                    ? cakupanElement.value
+                    : "wilayah",
+
             unitUsaha:
                 unitElement
                     ? unitElement.value
@@ -1513,9 +1547,9 @@ async function updatePelanggan(id) {
                     : "",
 
             status:
-    document.getElementById(
-        "pelangganStatus"
-    )?.value || "aktif"
+                document.getElementById(
+                    "pelangganStatus"
+                )?.value || "aktif"
 
         };
 
@@ -1626,6 +1660,7 @@ async function hapusPelanggan(id) {
     }
 
 }
+
 
 
  // =========================================

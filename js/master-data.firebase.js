@@ -1801,70 +1801,57 @@ async function simpanPelangganFirebase(data) {
 
         const dataSimpan = {
 
-            kode:
-                data.kode,
+            kode: data.kode,
 
-            nama:
-                data.nama,
+            nama: data.nama,
 
-            noHp:
-                data.noHp || "",
+            noHp: data.noHp || "",
 
-            alamat:
-                data.alamat || "",
+            alamat: data.alamat || "",
 
-            jenis:
-                data.jenis || "perorangan",
+            jenis: data.jenis || "perorangan",
 
-            unitUsaha:
-                data.unitUsaha || "",
+            // cakupan pelanggan
+            // wilayah = terikat RT/RW
+            // khusus = tidak terikat RT/RW
+            cakupan: data.cakupan || "wilayah",
 
-            keterangan:
-                data.keterangan || "",
+            unitUsaha: data.unitUsaha || "",
 
-            status:
-                data.status || "aktif",
+            keterangan: data.keterangan || "",
 
-            dibuatPada:
-                serverTimestamp()
+            status: data.status || "aktif",
+
+            dibuatPada: serverTimestamp()
 
         };
 
-
-        const docRef =
-            await addDoc(
-
-                collection(
-                    window.db,
-                    "masterPelanggan"
-                ),
-
-                dataSimpan
-
-            );
-
-
-        console.log(
-            "Pelanggan berhasil disimpan."
+        const docRef = await addDoc(
+            collection(window.db, "masterPelanggan"),
+            dataSimpan
         );
 
         console.log(
-            "ID pelanggan:",
+            "Pelanggan berhasil disimpan:",
             docRef.id
         );
 
-
-        return true;
-
+        return {
+            sukses: true,
+            id: docRef.id
+        };
 
     } catch (error) {
 
         console.error(
-            "Simpan pelanggan gagal:",
+            "Gagal menyimpan pelanggan:",
             error
         );
 
-        return false;
+        return {
+            sukses: false,
+            error: error.message
+        };
 
     }
 
@@ -1875,90 +1862,62 @@ async function simpanPelangganFirebase(data) {
 // UPDATE PELANGGAN
 // =========================================
 
-async function updatePelangganFirebase(
-    id,
-    data
-) {
+async function updatePelangganFirebase(id, data) {
 
     try {
 
-        if (!window.db) {
-
-            throw new Error(
-                "Firebase Firestore belum tersedia."
-            );
-
-        }
-
-        const {
-            doc,
-            updateDoc
-        } = await import(
-            "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js"
-        );
-
-
         const dataUpdate = {
 
-            kode:
-                data.kode,
+            kode: data.kode,
 
-            nama:
-                data.nama,
+            nama: data.nama,
 
-            noHp:
-                data.noHp || "",
+            noHp: data.noHp || "",
 
-            alamat:
-                data.alamat || "",
+            alamat: data.alamat || "",
 
-            jenis:
-                data.jenis || "perorangan",
+            jenis: data.jenis || "perorangan",
 
-            unitUsaha:
-                data.unitUsaha || "",
+            // cakupan pelanggan
+            // wilayah = terikat RT/RW
+            // khusus = tidak terikat RT/RW
+            cakupan: data.cakupan || "wilayah",
 
-            keterangan:
-                data.keterangan || "",
+            unitUsaha: data.unitUsaha || "",
 
-            status:
-                data.status || "aktif",
+            keterangan: data.keterangan || "",
 
-            diubahPada:
-                new Date()
+            status: data.status || "aktif",
+
+            diubahPada: new Date()
 
         };
 
-
         await updateDoc(
-
-            doc(
-                window.db,
-                "masterPelanggan",
-                id
-            ),
-
+            doc(window.db, "masterPelanggan", id),
             dataUpdate
-
         );
-
 
         console.log(
-            "Pelanggan berhasil diperbarui."
+            "Pelanggan berhasil diperbarui:",
+            id
         );
 
-
-        return true;
-
+        return {
+            sukses: true
+        };
 
     } catch (error) {
 
         console.error(
-            "Update pelanggan gagal:",
+            "Gagal memperbarui pelanggan:",
             error
         );
 
-        return false;
+        return {
+            sukses: false,
+            error: error.message
+        };
 
     }
 

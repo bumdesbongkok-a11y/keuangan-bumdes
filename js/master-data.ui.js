@@ -1522,6 +1522,28 @@ function formTambahPelanggan() {
                 </select>
 
             </div>
+			
+			<div class="form-group">
+
+    <label>
+        Cakupan Pelanggan
+    </label>
+
+    <select
+        id="pelangganCakupan"
+    >
+
+        <option value="wilayah">
+            Terikat RT / RW
+        </option>
+
+        <option value="khusus">
+            Pelanggan Khusus / Tidak Terikat RT / RW
+        </option>
+
+    </select>
+
+</div>
 
             <div class="form-group">
 
@@ -1718,6 +1740,10 @@ function tampilDataPelanggan(data) {
     }
 
 
+    // =========================================
+    // JIKA DATA KOSONG
+    // =========================================
+
     if (
         !data ||
         data.length === 0
@@ -1736,6 +1762,10 @@ function tampilDataPelanggan(data) {
     }
 
 
+    // =========================================
+    // JUDUL
+    // =========================================
+
     let html = `
 
         <div class="tabel-master-data">
@@ -1747,7 +1777,15 @@ function tampilDataPelanggan(data) {
     `;
 
 
+    // =========================================
+    // TAMPILKAN SETIAP PELANGGAN
+    // =========================================
+
     data.forEach(function(item) {
+
+        // -----------------------------------------
+        // STATUS
+        // -----------------------------------------
 
         const status =
             item.status === "aktif"
@@ -1755,12 +1793,30 @@ function tampilDataPelanggan(data) {
                 : "Nonaktif";
 
 
+        // -----------------------------------------
+        // JENIS
+        // -----------------------------------------
+
         const jenis =
             item.jenis
                 ? item.jenis.charAt(0).toUpperCase() +
                   item.jenis.slice(1)
                 : "-";
 
+
+        // -----------------------------------------
+        // CAKUPAN PELANGGAN
+        // -----------------------------------------
+
+        const cakupan =
+            item.cakupan === "khusus"
+                ? "Pelanggan Khusus / Tidak Terikat RT / RW"
+                : "Terikat RT / RW";
+
+
+        // -----------------------------------------
+        // DATA PELANGGAN
+        // -----------------------------------------
 
         html += `
 
@@ -1772,15 +1828,24 @@ function tampilDataPelanggan(data) {
                         ${item.nama || "-"}
                     </strong>
 
+
                     <small>
                         Kode:
                         ${item.kode || "-"}
                     </small>
 
+
                     <small>
                         Jenis:
                         ${jenis}
                     </small>
+
+
+                    <small>
+                        Cakupan:
+                        ${cakupan}
+                    </small>
+
 
                     ${
                         item.noHp
@@ -1793,6 +1858,7 @@ function tampilDataPelanggan(data) {
                             : ""
                     }
 
+
                     ${
                         item.alamat
                             ? `
@@ -1803,6 +1869,7 @@ function tampilDataPelanggan(data) {
                               `
                             : ""
                     }
+
 
                     ${
                         item.unitUsaha
@@ -1815,15 +1882,18 @@ function tampilDataPelanggan(data) {
                             : ""
                     }
 
+
                     <small>
                         Status:
                         ${status}
                     </small>
 
+
                     ${
                         item.keterangan
                             ? `
                                 <small>
+                                    Keterangan:
                                     ${item.keterangan}
                                 </small>
                               `
@@ -1831,6 +1901,7 @@ function tampilDataPelanggan(data) {
                     }
 
                 </div>
+
 
                 <div>
 
@@ -1842,6 +1913,7 @@ function tampilDataPelanggan(data) {
                     >
                         Edit
                     </button>
+
 
                     <button
                         type="button"
@@ -1861,12 +1933,20 @@ function tampilDataPelanggan(data) {
     });
 
 
+    // =========================================
+    // TUTUP CONTAINER
+    // =========================================
+
     html += `
 
         </div>
 
     `;
 
+
+    // =========================================
+    // TAMPILKAN KE HALAMAN
+    // =========================================
 
     container.innerHTML =
         html;
@@ -2019,6 +2099,28 @@ async function formEditPelanggan(item) {
                 </select>
 
             </div>
+			
+			<div class="form-group">
+
+    <label>
+        Cakupan Pelanggan
+    </label>
+
+    <select
+        id="pelangganCakupan"
+    >
+
+        <option value="wilayah">
+            Terikat RT / RW
+        </option>
+
+        <option value="khusus">
+            Pelanggan Khusus / Tidak Terikat RT / RW
+        </option>
+
+    </select>
+
+</div>
 
             <div class="form-group">
 

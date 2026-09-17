@@ -148,96 +148,234 @@ async function updateAkunPemasukan() {
 // DROPDOWN PELANGGAN / PIHAK
 // =========================================
 
-async function updatePelangganPemasukan(nilaiTerpilih = "") {
+// =========================================
+// PELANGGAN PEMASUKAN
+// =========================================
+
+async function updatePelangganPemasukan(
+    nilaiTerpilih = ""
+) {
 
     const select =
-        document.getElementById(
-            "pemasukanPelanggan"
-        );
+        document.getElementById("pemasukanPelanggan");
 
     if (!select) {
-		
         return;
     }
 
-    // =====================================
-    // RESET DROPDOWN
-    // =====================================
-
-    select.innerHTML = `
-        <option value="">
-            -- Pilih Pelanggan / Pihak --
-        </option>
-    `;
-
     try {
 
-        // =================================
-        // AMBIL MASTER PELANGGAN
-        // =================================
+        // Kosongkan dropdown
+        select.innerHTML = "";
 
+        // Pilihan awal
+        const optionAwal =
+            document.createElement("option");
+
+        optionAwal.value = "";
+        optionAwal.textContent =
+            "-- Pilih Pelanggan --";
+
+        select.appendChild(optionAwal);
+
+
+        // Ambil pelanggan dari Firebase
         const data =
             await ambilPelangganFirebase();
 
-        // =================================
-        // HANYA PELANGGAN AKTIF
-        // =================================
 
-        const daftar =
-            (data || []).filter(function(item) {
+        if (!Array.isArray(data)) {
+            updateTampilanRTRWPelanggan();
+            return;
+        }
 
-                return item.status !== "nonaktif";
 
-            });
+        // =====================================
+        // MASUKKAN PELANGGAN AKTIF
+        // =====================================
 
-        // =================================
-        // TAMPILKAN
-        // =================================
+        data.forEach(function(item) {
 
-        daftar.forEach(function(item) {
+            if (item.status !== "aktif") {
+                return;
+            }
+
 
             const option =
-                document.createElement(
-                    "option"
-                );
+                document.createElement("option");
+
 
             option.value =
                 item.id;
+
 
             option.textContent =
                 item.kode +
                 " - " +
                 item.nama;
 
-            if (
-                nilaiTerpilih &&
-                item.id === nilaiTerpilih
-            ) {
-                option.selected = true;
-            }
 
-            select.appendChild(
-                option
-            );
+            // =================================
+            // CAKUPAN PELANGGAN
+            // =================================
+            //
+            // wilayah = terikat RT/RW
+            // khusus  = tidak terikat RT/RW
+            //
+            // Pelanggan lama yang belum mempunyai
+            // cakupan dianggap wilayah.
+            // =================================
+
+            option.dataset.cakupan =
+                item.cakupan || "wilayah";
+
+
+            select.appendChild(option);
 
         });
+
+
+        // =====================================
+        // KEMBALIKAN PILIHAN SAAT EDIT
+        // =====================================
+
+        if (nilaiTerpilih) {
+
+            select.value =
+                nilaiTerpilih;
+
+        }
+
+
+        // =====================================
+        // ATUR RT / RW
+        // =====================================
+
+        updateTampilanRTRWPelanggan();
+
 
     } catch (error) {
 
         console.error(
-            "Gagal memuat pelanggan/pihak:",
+            "Gagal memuat pelanggan:",
             error
         );
-
-        select.innerHTML = `
-            <option value="">
-                Gagal memuat pelanggan / pihak
-            </option>
-        `;
 
     }
 
 }
+
+// =========================================
+// TAMPILAN RT / RW BERDASARKAN PELANGGAN
+// =========================================
+
+function updateTampilanRTRWPelanggan() {
+
+    const pelangganSelect =
+        document.getElementById(
+            "pemasukanPelanggan"
+        );
+
+    const rtElement =
+        document.getElementById(
+            "pemasukanRT"
+        );
+
+    const rwElement =
+        document.getElementById(
+            "pemasukanRW"
+        );
+
+
+    // Jika elemen belum tersedia
+    if (
+        !pelangganSelect ||
+        !rtElement ||
+        !rwElement
+    ) {
+        return;
+    }
+
+
+    const optionTerpilih =
+        pelangganSelect.options[
+            pelangganSelect.selectedIndex
+        ];
+
+
+    // Default pelanggan lama
+    let cakupan = "wilayah";
+
+
+    if (optionTerpilih) {
+
+        cakupan =
+            optionTerpilih.dataset.cakupan ||
+            "wilayah";
+
+    }
+
+
+    // =========================================
+    // PELANGGAN KHUSUS
+    // =========================================
+
+    if (cakupan === "khusus") {
+
+        // Hapus nilai RT/RW
+        rtElement.value = "";
+        rwElement.value = "";
+
+
+        // Tidak perlu diisi
+        rtElement.disabled = true;
+        rwElement.disabled = true;
+
+
+        // Hapus kewajiban HTML
+        rtElement.removeAttribute(
+            "required"
+        );
+
+        rwElement.removeAttribute(
+            "required"
+        );
+
+    }
+
+
+    // =========================================
+    // PELANGGAN WILAYAH
+    // =========================================
+
+    else {
+
+        rtElement.disabled = false;
+        rwElement.disabled = false;
+
+    }
+
+}
+
+// =========================================
+// EVENT PERUBAHAN PELANGGAN
+// =========================================
+
+document.addEventListener(
+    "change",
+    function(event) {
+
+        if (
+            event.target.id ===
+            "pemasukanPelanggan"
+        ) {
+
+            updateTampilanRTRWPelanggan();
+
+        }
+
+    }
+);
 
 // =========================================
 // UPDATE FORM PEMASUKAN

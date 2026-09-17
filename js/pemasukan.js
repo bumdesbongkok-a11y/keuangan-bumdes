@@ -13,34 +13,55 @@ function ambilDataPemasukan() {
     const unitUsaha =
         document.getElementById("pemasukanUnit").value;
 
-    const data = {
+    const pelangganElement =
+    document.getElementById("pemasukanPelanggan");
 
-        tanggal:
-            document.getElementById("pemasukanTanggal").value,
+const pelangganTerpilih =
+    pelangganElement.options[pelangganElement.selectedIndex];
 
-        unitUsaha: unitUsaha,
+const cakupanPelanggan =
+    pelangganTerpilih
+        ? pelangganTerpilih.dataset.cakupan || "wilayah"
+        : "wilayah";
 
-		pelangganId:
-			document.getElementById("pemasukanPelanggan").value,
 
-        akun:
-            document.getElementById("pemasukanAkun").value,
+const data = {
 
-        mediaTujuan:
-            document.getElementById("pemasukanMedia").value,
+    tanggal:
+        document.getElementById("pemasukanTanggal").value,
 
-        nominal:
-            Number(
-                document.getElementById("pemasukanNominal").value
-            ),
+    unitUsaha:
+        unitUsaha,
 
-        keterangan:
-            document.getElementById("pemasukanKeterangan").value.trim(),
+    pelangganId:
+        pelangganElement.value,
 
-        nomorBukti:
-            document.getElementById("pemasukanBukti").value.trim()
+    cakupanPelanggan:
+        cakupanPelanggan,
 
-    };
+    akun:
+        document.getElementById("pemasukanAkun").value,
+
+    mediaTujuan:
+        document.getElementById("pemasukanMedia").value,
+
+    nominal:
+        Number(
+            document.getElementById("pemasukanNominal").value
+        ),
+
+    keterangan:
+        document
+            .getElementById("pemasukanKeterangan")
+            .value
+            .trim(),
+
+    nomorBukti:
+        document
+            .getElementById("pemasukanBukti")
+            .value
+            .trim()
+};
 
 
     // =====================================
@@ -76,78 +97,61 @@ function ambilDataPemasukan() {
 function validasiPemasukan(data) {
 
     if (!data.tanggal) {
-
         return "Tanggal belum diisi.";
-
     }
-
 
     if (!data.unitUsaha) {
-
         return "Unit usaha belum dipilih.";
-
     }
-
 
     if (!data.akun) {
-
         return "Akun pendapatan belum dipilih.";
-
     }
-
 
     if (!data.mediaTujuan) {
-
         return "Tempat uang masuk belum dipilih.";
-
     }
-
 
     if (!validasiNominal(data.nominal)) {
-
         return "Nominal tidak valid.";
-
     }
 
 
-    // =====================================
-    // VALIDASI PENGELOLAAN SAMPAH
-    // =====================================
+    // =========================================
+    // VALIDASI KHUSUS PENGELOLAAN SAMPAH
+    // =========================================
 
     if (data.unitUsaha === "PENGELOLAAN_SAMPAH") {
 
         if (!data.jenisPendapatan) {
-
             return "Jenis pendapatan belum dipilih.";
-
         }
-
-
-        if (!data.rt) {
-
-            return "RT belum dipilih.";
-
-        }
-
-
-        if (!data.rw) {
-
-            return "RW belum dipilih.";
-
-        }
-
 
         if (!data.namaPenyetor) {
-
             return "Nama penyetor belum diisi.";
+        }
+
+
+        // =====================================
+        // RT / RW HANYA WAJIB UNTUK
+        // PELANGGAN YANG TERIKAT WILAYAH
+        // =====================================
+
+        if (data.cakupanPelanggan !== "khusus") {
+
+            if (!data.rt) {
+                return "RT belum dipilih.";
+            }
+
+            if (!data.rw) {
+                return "RW belum dipilih.";
+            }
 
         }
 
     }
 
-
     return null;
-
 }
 
 
