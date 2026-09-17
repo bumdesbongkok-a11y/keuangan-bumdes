@@ -7,7 +7,6 @@
 //
 // 1. TAHUN AWAL PEMBUKUAN
 //    - Pembukuan dimulai tahun 2020
-//    - Tahun 2020 menjadi dasar histori laporan
 //
 // 2. MASTER ASET
 //    - Hanya sebagai master/reference
@@ -25,26 +24,38 @@
 //
 // 5. PENYUSUTAN
 //    - Metode garis lurus
-//    - Tahun perolehan tidak disusutkan
-//    - Penyusutan dimulai tahun berikutnya
+//    - Penyusutan dihitung PER BULAN
+//    - Bulan perolehan TIDAK disusutkan
+//    - Penyusutan dimulai bulan berikutnya
 //    - Penyusutan historis dihitung otomatis
 //    - Akumulasi penyusutan masuk ke nilai buku aset
 //    - Beban penyusutan masuk ke Laba/Rugi
 //    - Penyusutan historis masuk ke Saldo Laba sebelumnya
 //
-// 6. SALDO LABA SEBELUMNYA
+// 6. AFFILIATE
+//    - Saldo Affiliate BUKAN media uang Neraca
+//    - Saldo Affiliate tidak menambah Kas
+//    - Saldo Affiliate tidak menambah Bank
+//    - Saldo Affiliate tidak menambah Dana
+//    - Saldo Affiliate hanya berubah pada transaksi Affiliate
+//    - Affiliate -> Kas hanya melalui TRANSFER
+//    - Saat Affiliate ditarik ke Kas:
+//        Affiliate berkurang
+//        Kas bertambah
+//
+// 7. SALDO LABA SEBELUMNYA
 //    - Dimulai dari tahun 2020
 //    - Mengakumulasi laba/rugi setiap tahun sebelum tahun laporan
 //    - Termasuk penyusutan historis
 //
-// 7. EKUITAS
+// 8. EKUITAS
 //
 //    Modal Disetor
 //    + Saldo Laba Tahun Sebelumnya
 //    + Laba/Rugi Tahun Berjalan
 //    = Total Ekuitas
 //
-// 8. NERACA TIDAK DIPAKSA BALANCE
+// 9. NERACA TIDAK DIPAKSA BALANCE
 //
 // =========================================================
 
@@ -53,7 +64,6 @@
 // KONFIGURASI PEMBUKUAN
 // =========================================================
 
-// Tahun awal histori pembukuan BUMDes
 const TAHUN_AWAL_PEMBUKUAN_NERACA = 2020;
 
 
@@ -394,7 +404,6 @@ function tahunPerolehanAsetNeraca(
         ) || 0;
 
 
-    // Kompatibilitas data lama
     if (
         tahun <= 0 &&
         master?.tanggalPerolehan
@@ -410,8 +419,6 @@ function tahunPerolehanAsetNeraca(
     }
 
 
-    // Jika master tidak memiliki tahun
-    // gunakan tanggal transaksi aset
     if (
         tahun <= 0
     ) {
@@ -433,6 +440,91 @@ function tahunPerolehanAsetNeraca(
 
 
     return tahun;
+
+}
+
+
+// =========================================================
+// AMBIL TANGGAL PEROLEHAN ASET
+// =========================================================
+//
+// PRIORITAS:
+//
+// 1. tanggal transaksi aset
+// 2. tanggalPerolehan master aset
+// 3. tahunPerolehan master aset
+//
+// Bulan perolehan TIDAK disusutkan.
+// Penyusutan dimulai bulan berikutnya.
+//
+// =========================================================
+
+function tanggalPerolehanAsetNeraca(
+    transaksi,
+    master
+) {
+
+    const tanggalTransaksi =
+        tanggalNeraca(
+            transaksi
+        );
+
+
+    if (tanggalTransaksi) {
+
+        return new Date(
+            tanggalTransaksi.getFullYear(),
+            tanggalTransaksi.getMonth(),
+            tanggalTransaksi.getDate()
+        );
+
+    }
+
+
+    if (
+        master?.tanggalPerolehan
+    ) {
+
+        const tanggalMaster =
+            tanggalNeraca({
+                tanggal:
+                    master.tanggalPerolehan
+            });
+
+
+        if (tanggalMaster) {
+
+            return new Date(
+                tanggalMaster.getFullYear(),
+                tanggalMaster.getMonth(),
+                tanggalMaster.getDate()
+            );
+
+        }
+
+    }
+
+
+    const tahun =
+        Number(
+            master?.tahunPerolehan
+        ) || 0;
+
+
+    if (
+        tahun > 0
+    ) {
+
+        return new Date(
+            tahun,
+            0,
+            1
+        );
+
+    }
+
+
+    return null;
 
 }
 
@@ -505,34 +597,77 @@ function parameterAsetNeraca(
 
 
 // =========================================================
-// HITUNG KAS / BANK / DANA
+// HITUNG KAS / BANK / DANA / AFFILIATE
+// =========================================================
+//
+// CATATAN PENTING:
+//
+// Affiliate TIDAK dianggap sebagai Kas.
+//
+// Contoh:
+//
+// PEMASUKAN
+// mediaTujuan = AFFILIATE
+//
+// hasil:
+// saldoAffiliate bertambah
+// Kas TIDAK bertambah
+//
+// TRANSFER
+// mediaAsal = AFFILIATE
+// mediaTujuan = KAS
+//
+// hasil:
+// saldoAffiliate berkurang
+// Kas bertambah
+//
 // =========================================================
 
 async function hitungSaldoMediaNeracaFirebase(
     sampai
 ) {
 
+ 
     const transaksi =
         await loadTransaksiNeracaFirebase();
 
 
     let kas = 0;
+
     let bank = 0;
+
     let dana = 0;
+
     let saldoAffiliate = 0;
 
 
     transaksi
         .filter(
-            function(item) {
+    function(item) {
 
-                return transaksiSampaiTanggalNeraca(
-                    item.tanggal,
-                    sampai
-                );
+        const tanggal =
+            tanggalNeraca(item);
 
-            }
-        )
+        const tanggalAwal =
+            new Date(
+                TAHUN_AWAL_PEMBUKUAN_NERACA,
+                0,
+                1
+            );
+
+        const tanggalAkhir =
+            new Date(
+                sampai + "T23:59:59"
+            );
+
+        return (
+            tanggal &&
+            tanggal >= tanggalAwal &&
+            tanggal <= tanggalAkhir
+        );
+
+    }
+)
         .sort(
             function(a, b) {
 
@@ -553,6 +688,8 @@ async function hitungSaldoMediaNeracaFirebase(
         )
         .forEach(
             function(item) {
+				
+				
 
                 const jenis =
                     String(
@@ -612,7 +749,12 @@ async function hitungSaldoMediaNeracaFirebase(
                         media === "AFFILIATE"
                     ) {
 
-                        saldoAffiliate += nominal;
+                        // =================================
+                        // AFFILIATE BUKAN KAS
+                        // =================================
+
+                        saldoAffiliate +=
+                            nominal;
 
                     }
 
@@ -658,7 +800,13 @@ async function hitungSaldoMediaNeracaFirebase(
                         media === "AFFILIATE"
                     ) {
 
-                        saldoAffiliate -= nominal;
+                        // =================================
+                        // PENGELUARAN DARI SALDO AFFILIATE
+                        // TIDAK MENGURANGI KAS
+                        // =================================
+
+                        saldoAffiliate -=
+                            nominal;
 
                     }
 
@@ -685,6 +833,10 @@ async function hitungSaldoMediaNeracaFirebase(
                         ).toUpperCase();
 
 
+                    // =================================
+                    // MEDIA ASAL
+                    // =================================
+
                     if (
                         asal === "KAS"
                     ) {
@@ -710,10 +862,15 @@ async function hitungSaldoMediaNeracaFirebase(
                         asal === "AFFILIATE"
                     ) {
 
-                        saldoAffiliate -= nominal;
+                        saldoAffiliate -=
+                            nominal;
 
                     }
 
+
+                    // =================================
+                    // MEDIA TUJUAN
+                    // =================================
 
                     if (
                         tujuan === "KAS"
@@ -740,7 +897,8 @@ async function hitungSaldoMediaNeracaFirebase(
                         tujuan === "AFFILIATE"
                     ) {
 
-                        saldoAffiliate += nominal;
+                        saldoAffiliate +=
+                            nominal;
 
                     }
 
@@ -748,6 +906,20 @@ async function hitungSaldoMediaNeracaFirebase(
 
             }
         );
+
+
+    // =============================================
+    // MEDIA UANG NERACA
+    // =============================================
+    //
+    // Affiliate SENGAJA tidak dimasukkan.
+    //
+    // =============================================
+
+    const totalKasBankDana =
+        kas +
+        bank +
+        dana;
 
 
     return {
@@ -758,18 +930,14 @@ async function hitungSaldoMediaNeracaFirebase(
 
         dana,
 
+        // Informasi saldo affiliate tetap tersedia,
+        // tetapi bukan bagian dari media uang Neraca.
         saldoAffiliate,
 
-        totalKasBankDana:
-            kas +
-            bank +
-            dana,
+        totalKasBankDana,
 
         totalMediaUang:
-            kas +
-            bank +
-            dana +
-            saldoAffiliate
+            totalKasBankDana
 
     };
 
@@ -895,27 +1063,22 @@ async function hitungUtangNeracaFirebase(
 
 
 // =========================================================
-// HITUNG PENYUSUTAN PERIODE
+// HITUNG PENYUSUTAN PERIODE — BULANAN
 // =========================================================
+//
+// RUMUS:
+//
+// Penyusutan Bulanan =
+// (Harga Perolehan - Nilai Sisa)
+// / (Umur Manfaat x 12)
 //
 // ATURAN:
 //
-// Tahun perolehan = tidak disusutkan
-//
-// Tahun berikutnya = mulai disusutkan
-//
-// Contoh:
-//
-// Aset 2021
-// Harga Rp728.000
-// Umur 4 tahun
-// Nilai sisa Rp0
-//
-// 2021 = Rp0
-// 2022 = Rp182.000
-// 2023 = Rp182.000
-// 2024 = Rp182.000
-// 2025 = Rp182.000
+// - Bulan perolehan = Rp0
+// - Mulai bulan berikutnya
+// - Garis lurus
+// - Maksimal umur manfaat
+// - Penyusutan historis tetap dihitung
 //
 // =========================================================
 
@@ -942,9 +1105,8 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
                 item.id
             ) {
 
-                masterById[
-                    item.id
-                ] = item;
+                masterById[item.id] =
+                    item;
 
             }
 
@@ -952,16 +1114,32 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
     );
 
 
-    const tahunDari =
+    const tanggalDari =
         new Date(
             dari + "T00:00:00"
-        ).getFullYear();
+        );
 
 
-    const tahunSampai =
+    const tanggalSampai =
         new Date(
             sampai + "T23:59:59"
-        ).getFullYear();
+        );
+
+
+    const bulanDari =
+        new Date(
+            tanggalDari.getFullYear(),
+            tanggalDari.getMonth(),
+            1
+        );
+
+
+    const bulanSampai =
+        new Date(
+            tanggalSampai.getFullYear(),
+            tanggalSampai.getMonth(),
+            1
+        );
 
 
     let total = 0;
@@ -970,24 +1148,14 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
     transaksi.forEach(
         function(item) {
 
-            // -----------------------------------------
-            // HARUS TRANSAKSI ASET
-            // -----------------------------------------
-
             if (
-                !transaksiAdalahAsetNeraca(
-                    item
-                )
+                !transaksiAdalahAsetNeraca(item)
             ) {
 
                 return;
 
             }
 
-
-            // -----------------------------------------
-            // ASET HARUS SUDAH DIPEROLEH
-            // -----------------------------------------
 
             if (
                 !transaksiSampaiTanggalNeraca(
@@ -1026,14 +1194,9 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
                 parameter.umurManfaat;
 
 
-            const tahunPerolehan =
-                parameter.tahunPerolehan;
-
-
             if (
                 harga <= 0 ||
                 umurManfaat <= 0 ||
-                tahunPerolehan <= 0 ||
                 harga <= nilaiSisa
             ) {
 
@@ -1042,29 +1205,61 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
             }
 
 
-            // -----------------------------------------
-            // DEPRESIASI TAHUNAN
-            // -----------------------------------------
+            const tanggalPerolehan =
+                tanggalPerolehanAsetNeraca(
+                    item,
+                    master
+                );
 
-            const depresiasiTahunan =
+
+            if (
+                !tanggalPerolehan
+            ) {
+
+                return;
+
+            }
+
+
+            // =====================================
+            // UMUR MANFAAT DALAM BULAN
+            // =====================================
+
+            const umurManfaatBulan =
+                umurManfaat * 12;
+
+
+            // =====================================
+            // PENYUSUTAN PER BULAN
+            // =====================================
+
+            const depresiasiBulanan =
                 (
                     harga -
                     nilaiSisa
                 ) /
-                umurManfaat;
+                umurManfaatBulan;
 
 
-            // -----------------------------------------
-            // PENYUSUTAN MULAI TAHUN BERIKUTNYA
-            // -----------------------------------------
+            // =====================================
+            // MULAI BULAN BERIKUTNYA
+            // =====================================
 
-            const tahunMulaiDepresiasi =
-                tahunPerolehan + 1;
+            const bulanMulaiDepresiasi =
+                new Date(
+                    tanggalPerolehan.getFullYear(),
+                    tanggalPerolehan.getMonth() + 1,
+                    1
+                );
 
+
+            // =====================================
+            // JIKA BELUM MULAI
+            // =====================================
 
             if (
-                tahunSampai <
-                tahunMulaiDepresiasi
+                bulanSampai <
+                bulanMulaiDepresiasi
             ) {
 
                 return;
@@ -1072,35 +1267,20 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
             }
 
 
-            // -----------------------------------------
-            // TAHUN TERAKHIR
-            // -----------------------------------------
+            // =====================================
+            // AWAL BULAN YANG DIHITUNG
+            // =====================================
 
-            const tahunAkhirDepresiasi =
-                tahunPerolehan +
-                umurManfaat;
-
-
-            // -----------------------------------------
-            // CARI IRISAN PERIODE
-            // -----------------------------------------
-
-            const awal =
-                Math.max(
-                    tahunDari,
-                    tahunMulaiDepresiasi
-                );
-
-
-            const akhir =
-                Math.min(
-                    tahunSampai,
-                    tahunAkhirDepresiasi
-                );
+            const bulanAwalPeriode =
+                bulanDari >
+                bulanMulaiDepresiasi
+                    ? bulanDari
+                    : bulanMulaiDepresiasi;
 
 
             if (
-                akhir < awal
+                bulanAwalPeriode >
+                bulanSampai
             ) {
 
                 return;
@@ -1108,28 +1288,92 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
             }
 
 
-            // -----------------------------------------
-            // JUMLAH TAHUN
-            // -----------------------------------------
+            // =====================================
+            // JUMLAH BULAN DALAM PERIODE
+            // =====================================
 
-            const jumlahTahun =
-                akhir -
-                awal +
+            let bulanBerjalanPeriode =
+                (
+                    (
+                        bulanSampai.getFullYear() -
+                        bulanAwalPeriode.getFullYear()
+                    ) * 12
+                ) +
+                (
+                    bulanSampai.getMonth() -
+                    bulanAwalPeriode.getMonth()
+                ) +
                 1;
 
 
-            // -----------------------------------------
-            // TOTAL DEPRESIASI
-            // -----------------------------------------
+            // =====================================
+            // BULAN YANG SUDAH DISUSUTKAN
+            // SEBELUM PERIODE
+            // =====================================
+
+            let bulanSebelumPeriode = 0;
+
+
+            if (
+                bulanDari >
+                bulanMulaiDepresiasi
+            ) {
+
+                bulanSebelumPeriode =
+                    (
+                        (
+                            bulanDari.getFullYear() -
+                            bulanMulaiDepresiasi.getFullYear()
+                        ) * 12
+                    ) +
+                    (
+                        bulanDari.getMonth() -
+                        bulanMulaiDepresiasi.getMonth()
+                    );
+
+            }
+
+
+            // =====================================
+            // BATAS UMUR MANFAAT
+            // =====================================
+
+            const sisaBulan =
+                Math.max(
+                    0,
+                    umurManfaatBulan -
+                    bulanSebelumPeriode
+                );
+
+
+            bulanBerjalanPeriode =
+                Math.min(
+                    bulanBerjalanPeriode,
+                    sisaBulan
+                );
+
+
+            if (
+                bulanBerjalanPeriode <= 0
+            ) {
+
+                return;
+
+            }
+
+
+            // =====================================
+            // TOTAL PENYUSUTAN PERIODE
+            // =====================================
 
             let depresiasiPeriode =
-                depresiasiTahunan *
-                jumlahTahun;
+                depresiasiBulanan *
+                bulanBerjalanPeriode;
 
 
-            // -----------------------------------------
+            // =====================================
             // BATAS MAKSIMAL
-            // -----------------------------------------
+            // =====================================
 
             const maksimumDepresiasi =
                 harga -
@@ -1146,7 +1390,53 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
             total +=
                 depresiasiPeriode;
 
+
+            // =====================================
+            // DEBUG
+            // =====================================
+
+            console.log(
+                "📉 Penyusutan Periode",
+                {
+                    transaksiId:
+                        item.id,
+
+                    tanggalPerolehan,
+
+                    bulanMulai:
+                        bulanMulaiDepresiasi,
+
+                    bulanDari:
+                        bulanDari,
+
+                    bulanSampai:
+                        bulanSampai,
+
+                    harga,
+
+                    nilaiSisa,
+
+                    umurManfaat,
+
+                    umurManfaatBulan,
+
+                    depresiasiBulanan,
+
+                    bulanSebelumPeriode,
+
+                    bulanBerjalanPeriode,
+
+                    depresiasiPeriode
+                }
+            );
+
         }
+    );
+
+
+    console.log(
+        "📉 TOTAL PENYUSUTAN PERIODE:",
+        total
     );
 
 
@@ -1159,35 +1449,20 @@ async function hitungDepresiasiPeriodeNeracaFirebase(
 // HITUNG ASET TETAP
 // =========================================================
 //
-// Master Aset hanya memberikan parameter:
+// Harga perolehan berasal dari transaksi.
 //
-// - nama
-// - kode
-// - tahun perolehan
+// Master Aset hanya menyediakan:
 // - umur manfaat
 // - nilai sisa
+// - identitas aset
 //
-// Saldo harga perolehan tetap berasal dari transaksi.
+// Penyusutan dihitung per bulan.
 //
 // =========================================================
 
-// =========================================================
-// HITUNG ASET TETAP
-// =========================================================
-//
-// Master Aset hanya memberikan parameter:
-//
-// - nama
-// - kode
-// - tahun perolehan
-// - umur manfaat
-// - nilai sisa
-//
-// Saldo harga perolehan tetap berasal dari transaksi.
-//
-// =========================================================
-
-async function hitungAsetNeracaFirebase(sampai) {
+async function hitungAsetNeracaFirebase(
+    sampai
+) {
 
     const semuaTransaksi =
         await loadTransaksiNeracaFirebase();
@@ -1203,25 +1478,18 @@ async function hitungAsetNeracaFirebase(sampai) {
         );
 
 
-    const tahunLaporan =
-        tanggalLaporan.getFullYear();
-
-
-    // =====================================================
-    // MASTER ASET DIINDEX BERDASARKAN ID
-    // =====================================================
-
     const masterById = {};
 
 
     semuaMasterAset.forEach(
         function(item) {
 
-            if (item.id) {
+            if (
+                item.id
+            ) {
 
-                masterById[
-                    item.id
-                ] = item;
+                masterById[item.id] =
+                    item;
 
             }
 
@@ -1229,17 +1497,14 @@ async function hitungAsetNeracaFirebase(sampai) {
     );
 
 
-    // =====================================================
-    // AMBIL SEMUA TRANSAKSI ASET
-    // SAMPAI TANGGAL LAPORAN
-    // =====================================================
-
     const transaksiAset =
         semuaTransaksi.filter(
             function(item) {
 
                 return (
-                    transaksiAdalahAsetNeraca(item) &&
+                    transaksiAdalahAsetNeraca(
+                        item
+                    ) &&
                     transaksiSampaiTanggalNeraca(
                         item.tanggal,
                         sampai
@@ -1249,10 +1514,6 @@ async function hitungAsetNeracaFirebase(sampai) {
             }
         );
 
-
-    // =====================================================
-    // TOTAL
-    // =====================================================
 
     let totalHargaPerolehan = 0;
 
@@ -1264,12 +1525,9 @@ async function hitungAsetNeracaFirebase(sampai) {
     const daftarAset = [];
 
 
-    // =====================================================
-    // HEADER DEBUG
-    // =====================================================
-
     console.group(
-        "🔎 RINCIAN ASET NERACA s/d " + sampai
+        "🔎 RINCIAN ASET NERACA s/d " +
+        sampai
     );
 
 
@@ -1278,21 +1536,6 @@ async function hitungAsetNeracaFirebase(sampai) {
         transaksiAset.length
     );
 
-
-    console.log(
-        "Tahun laporan:",
-        tahunLaporan
-    );
-
-
-    console.log(
-        "--------------------------------------"
-    );
-
-
-    // =====================================================
-    // HITUNG SATU PER SATU ASET
-    // =====================================================
 
     transaksiAset.forEach(
         function(transaksi, index) {
@@ -1307,10 +1550,6 @@ async function hitungAsetNeracaFirebase(sampai) {
                     asetId
                 ] || null;
 
-
-            // =================================================
-            // PARAMETER
-            // =================================================
 
             const parameter =
                 parameterAsetNeraca(
@@ -1335,10 +1574,6 @@ async function hitungAsetNeracaFirebase(sampai) {
                 parameter.tahunPerolehan;
 
 
-            // =================================================
-            // IDENTITAS ASET
-            // =================================================
-
             const namaAset =
                 transaksi.namaAset ||
                 transaksi.nama ||
@@ -1361,32 +1596,15 @@ async function hitungAsetNeracaFirebase(sampai) {
                 "-";
 
 
-            // =================================================
+            // =========================================
             // VALIDASI
-            // =================================================
+            // =========================================
 
             if (
                 harga <= 0 ||
                 umurManfaat <= 0 ||
                 tahunPerolehan <= 0
             ) {
-
-                console.warn(
-                    "⚠️ ASET TIDAK LENGKAP",
-                    {
-                        nomor: index + 1,
-                        namaAset,
-                        kodeAset,
-                        asetId,
-                        transaksiId: transaksi.id,
-                        harga,
-                        nilaiSisa,
-                        umurManfaat,
-                        tahunPerolehan,
-                        master
-                    }
-                );
-
 
                 daftarAset.push({
 
@@ -1410,23 +1628,23 @@ async function hitungAsetNeracaFirebase(sampai) {
 
                     nilaiSisa,
 
-                    depresiasiTahunan:
+                    depresiasiBulanan:
                         0,
 
-                    jumlahTahun:
+                    jumlahBulan:
                         0,
 
                     akumulasiDepresiasi:
                         0,
 
                     nilaiBuku:
-                        harga
+                        harga,
+
+                    statusPenyusutan:
+                        "PARAMETER ASET TIDAK LENGKAP"
 
                 });
 
-
-                // Harga tetap masuk
-                // jika transaksi aset memiliki nilai
 
                 totalHargaPerolehan +=
                     harga;
@@ -1441,47 +1659,156 @@ async function hitungAsetNeracaFirebase(sampai) {
             }
 
 
-            // =================================================
-            // DEPRESIASI TAHUNAN
-            // =================================================
+            const tanggalPerolehan =
+                tanggalPerolehanAsetNeraca(
+                    transaksi,
+                    master
+                );
 
-            const depresiasiTahunan =
+
+            if (
+                !tanggalPerolehan
+            ) {
+
+                daftarAset.push({
+
+                    transaksiId:
+                        transaksi.id,
+
+                    asetId,
+
+                    namaAset,
+
+                    kodeAset,
+
+                    unitUsaha,
+
+                    tahunPerolehan,
+
+                    hargaPerolehan:
+                        harga,
+
+                    umurManfaat,
+
+                    nilaiSisa,
+
+                    depresiasiBulanan:
+                        0,
+
+                    jumlahBulan:
+                        0,
+
+                    akumulasiDepresiasi:
+                        0,
+
+                    nilaiBuku:
+                        harga,
+
+                    statusPenyusutan:
+                        "TANGGAL PEROLEHAN TIDAK ADA"
+
+                });
+
+
+                totalHargaPerolehan +=
+                    harga;
+
+
+                totalNilaiBuku +=
+                    harga;
+
+
+                return;
+
+            }
+
+
+            // =========================================
+            // UMUR MANFAAT BULAN
+            // =========================================
+
+            const umurManfaatBulan =
+                umurManfaat *
+                12;
+
+
+            // =========================================
+            // PENYUSUTAN BULANAN
+            // =========================================
+
+            const depresiasiBulanan =
                 (
                     harga -
                     nilaiSisa
                 ) /
-                umurManfaat;
+                umurManfaatBulan;
 
 
-            // =================================================
-            // JUMLAH TAHUN PENYUSUTAN
-            // =================================================
-            //
-            // Tahun perolehan tidak dihitung.
-            //
-            // 2021 -> 2022 = 1
-            // 2021 -> 2023 = 2
-            // 2021 -> 2024 = 3
-            // 2021 -> 2025 = 4
-            //
-            // Maksimal = umur manfaat
-            //
-            // =================================================
+            // =========================================
+            // BULAN MULAI PENYUSUTAN
+            // =========================================
 
-            const jumlahTahun =
-                Math.min(
-                    Math.max(
-                        0,
-                        tahunLaporan -
-                        tahunPerolehan
-                    ),
-                    umurManfaat
+            const bulanMulaiDepresiasi =
+                new Date(
+                    tanggalPerolehan.getFullYear(),
+                    tanggalPerolehan.getMonth() + 1,
+                    1
                 );
 
 
-            // =================================================
-            // AKUMULASI PENYUSUTAN
-            // =================================================
+            // =========================================
+            // BULAN LAPORAN
+            // =========================================
+
+            const bulanLaporan =
+                new Date(
+                    tanggalLaporan.getFullYear(),
+                    tanggalLaporan.getMonth(),
+                    1
+                );
+
+
+            // =========================================
+            // JUMLAH BULAN PENYUSUTAN
+            // =========================================
+
+            let jumlahBulan = 0;
+
+
+            if (
+                bulanLaporan >=
+                bulanMulaiDepresiasi
+            ) {
+
+                jumlahBulan =
+                    (
+                        (
+                            bulanLaporan.getFullYear() -
+                            bulanMulaiDepresiasi.getFullYear()
+                        ) * 12
+                    ) +
+                    (
+                        bulanLaporan.getMonth() -
+                        bulanMulaiDepresiasi.getMonth()
+                    ) +
+                    1;
+
+            }
+
+
+            jumlahBulan =
+                Math.min(
+                    Math.max(
+                        0,
+                        jumlahBulan
+                    ),
+                    umurManfaatBulan
+                );
+
+
+            // =========================================
+            // BATAS MAKSIMAL PENYUSUTAN
+            // =========================================
 
             const maksimumDepresiasi =
                 harga -
@@ -1490,15 +1817,15 @@ async function hitungAsetNeracaFirebase(sampai) {
 
             const akumulasi =
                 Math.min(
-                    depresiasiTahunan *
-                    jumlahTahun,
+                    depresiasiBulanan *
+                    jumlahBulan,
                     maksimumDepresiasi
                 );
 
 
-            // =================================================
-            // NILAI BUKU ASET
-            // =================================================
+            // =========================================
+            // NILAI BUKU
+            // =========================================
 
             const nilaiBukuAset =
                 Math.max(
@@ -1508,9 +1835,9 @@ async function hitungAsetNeracaFirebase(sampai) {
                 );
 
 
-            // =================================================
+            // =========================================
             // TOTAL
-            // =================================================
+            // =========================================
 
             totalHargaPerolehan +=
                 harga;
@@ -1524,16 +1851,16 @@ async function hitungAsetNeracaFirebase(sampai) {
                 nilaiBukuAset;
 
 
-            // =================================================
-            // STATUS PENYUSUTAN
-            // =================================================
+            // =========================================
+            // STATUS
+            // =========================================
 
             let statusPenyusutan;
 
 
             if (
-                tahunLaporan <=
-                tahunPerolehan
+                bulanLaporan <
+                bulanMulaiDepresiasi
             ) {
 
                 statusPenyusutan =
@@ -1541,8 +1868,8 @@ async function hitungAsetNeracaFirebase(sampai) {
 
             }
             else if (
-                jumlahTahun >=
-                umurManfaat
+                jumlahBulan >=
+                umurManfaatBulan
             ) {
 
                 statusPenyusutan =
@@ -1557,11 +1884,7 @@ async function hitungAsetNeracaFirebase(sampai) {
             }
 
 
-            // =================================================
-            // DATA ASET
-            // =================================================
-
-            const dataAset = {
+            daftarAset.push({
 
                 transaksiId:
                     transaksi.id,
@@ -1576,16 +1899,20 @@ async function hitungAsetNeracaFirebase(sampai) {
 
                 tahunPerolehan,
 
+                tanggalPerolehan,
+
                 hargaPerolehan:
                     harga,
 
                 umurManfaat,
 
+                umurManfaatBulan,
+
                 nilaiSisa,
 
-                depresiasiTahunan,
+                depresiasiBulanan,
 
-                jumlahTahun,
+                jumlahBulan,
 
                 akumulasiDepresiasi:
                     akumulasi,
@@ -1595,123 +1922,34 @@ async function hitungAsetNeracaFirebase(sampai) {
 
                 statusPenyusutan
 
-            };
+            });
 
 
-            daftarAset.push(
-                dataAset
-            );
-
-
-            // =================================================
-            // DEBUG DETAIL ASET
-            // =================================================
-
-            console.group(
-                "📌 ASET " +
-                (index + 1) +
-                " - " +
-                namaAset
-            );
-
+            // =========================================
+            // DEBUG
+            // =========================================
 
             console.log(
-                "Kode Aset:",
-                kodeAset
+                "📌 ASET",
+                index + 1,
+                namaAset,
+                {
+                    tanggalPerolehan,
+                    bulanMulaiDepresiasi,
+                    harga,
+                    nilaiSisa,
+                    umurManfaat,
+                    umurManfaatBulan,
+                    depresiasiBulanan,
+                    jumlahBulan,
+                    akumulasi,
+                    nilaiBuku:
+                        nilaiBukuAset,
+                    statusPenyusutan
+                }
             );
-
-
-            console.log(
-                "Aset ID:",
-                asetId
-            );
-
-
-            console.log(
-                "Transaksi ID:",
-                transaksi.id
-            );
-
-
-            console.log(
-                "Unit Usaha:",
-                unitUsaha
-            );
-
-
-            console.log(
-                "Tahun Perolehan:",
-                tahunPerolehan
-            );
-
-
-            console.log(
-                "Tahun Laporan:",
-                tahunLaporan
-            );
-
-
-            console.log(
-                "Harga Perolehan:",
-                harga
-            );
-
-
-            console.log(
-                "Nilai Sisa:",
-                nilaiSisa
-            );
-
-
-            console.log(
-                "Umur Manfaat:",
-                umurManfaat,
-                "tahun"
-            );
-
-
-            console.log(
-                "Depresiasi per Tahun:",
-                depresiasiTahunan
-            );
-
-
-            console.log(
-                "Jumlah Tahun Disusutkan:",
-                jumlahTahun
-            );
-
-
-            console.log(
-                "Akumulasi Penyusutan:",
-                akumulasi
-            );
-
-
-            console.log(
-                "Nilai Buku:",
-                nilaiBukuAset
-            );
-
-
-            console.log(
-                "Status:",
-                statusPenyusutan
-            );
-
-
-            console.groupEnd();
 
         }
-    );
-
-
-    // =====================================================
-    // TOTAL DEBUG
-    // =====================================================
-
-    console.log(
-        "======================================"
     );
 
 
@@ -1739,17 +1977,8 @@ async function hitungAsetNeracaFirebase(sampai) {
     );
 
 
-    console.log(
-        "======================================"
-    );
-
-
     console.groupEnd();
 
-
-    // =====================================================
-    // RETURN
-    // =====================================================
 
     return {
 
@@ -1833,17 +2062,11 @@ async function hitungModalNeracaFirebase(
 // =========================================================
 //
 // Pembelian aset bukan beban.
-//
 // Modal bukan pendapatan.
-//
 // Transfer bukan pendapatan/beban.
-//
 // Piutang diterima kembali bukan pendapatan.
-//
 // Utang diterima bukan pendapatan.
-//
 // Pembayaran utang bukan beban.
-//
 // Penyusutan masuk sebagai beban.
 //
 // =========================================================
@@ -1922,8 +2145,6 @@ async function hitungLabaRugiNeracaFirebase(
                         ).toUpperCase();
 
 
-                    // Modal bukan pendapatan
-
                     if (
                         akunKode === "MODAL"
                     ) {
@@ -1942,8 +2163,6 @@ async function hitungLabaRugiNeracaFirebase(
                     }
 
 
-                    // Bukan pendapatan
-
                     if (
                         jenisPendapatan === "BUKAN_PENDAPATAN"
                     ) {
@@ -1953,8 +2172,6 @@ async function hitungLabaRugiNeracaFirebase(
                     }
 
 
-                    // Utang bukan pendapatan
-
                     if (
                         sumber === "UTANG"
                     ) {
@@ -1963,9 +2180,6 @@ async function hitungLabaRugiNeracaFirebase(
 
                     }
 
-
-                    // Penerimaan piutang
-                    // bukan pendapatan lagi
 
                     if (
                         sumber === "PIUTANG"
@@ -2014,8 +2228,6 @@ async function hitungLabaRugiNeracaFirebase(
                         ).toUpperCase();
 
 
-                    // Modal bukan beban
-
                     if (
                         akunKode === "MODAL"
                     ) {
@@ -2033,8 +2245,6 @@ async function hitungLabaRugiNeracaFirebase(
 
                     }
 
-
-                    // Aset bukan beban
 
                     if (
                         jenisPengeluaran === "ASET"
@@ -2054,8 +2264,6 @@ async function hitungLabaRugiNeracaFirebase(
                     }
 
 
-                    // Bukan beban
-
                     if (
                         jenisPengeluaran === "BUKAN_BEBAN"
                     ) {
@@ -2073,8 +2281,6 @@ async function hitungLabaRugiNeracaFirebase(
 
                     }
 
-
-                    // Utang bukan beban
 
                     if (
                         sumber === "UTANG"
@@ -2145,31 +2351,8 @@ async function hitungLabaRugiNeracaFirebase(
 // HITUNG SALDO LABA / RUGI SEBELUMNYA
 // =========================================================
 //
-// ATURAN FINAL:
-//
-// Neraca 2020
-//    Saldo laba sebelumnya = Rp0
-//
-// Neraca 2021
-//    Saldo laba sebelumnya = laba/rugi 2020
-//
-// Neraca 2022
-//    Saldo laba sebelumnya = laba/rugi 2020 + 2021
-//
-// Neraca 2023
-//    Saldo laba sebelumnya = laba/rugi 2020 + 2021 + 2022
-//
-// Neraca 2024
-//    Saldo laba sebelumnya = 2020 + 2021 + 2022 + 2023
-//
-// Neraca 2025
-//    Saldo laba sebelumnya = 2020 + 2021 + 2022 + 2023 + 2024
-//
-// Neraca 2026
-//    Saldo laba sebelumnya = 2020 + 2021 + 2022 + 2023 + 2024 + 2025
-//
-// Penyusutan historis SUDAH termasuk karena setiap
-// tahun dihitung menggunakan hitungLabaRugiNeracaFirebase().
+// Penyusutan historis dihitung per bulan melalui
+// hitungLabaRugiNeracaFirebase().
 //
 // =========================================================
 
@@ -2182,10 +2365,6 @@ async function hitungSaldoLabaSebelumnyaNeracaFirebase(
             dari + "T00:00:00"
         ).getFullYear();
 
-
-    // ---------------------------------------------------------
-    // JIKA TAHUN LAPORAN ADALAH TAHUN AWAL
-    // ---------------------------------------------------------
 
     if (
         tahunLaporan <=
@@ -2202,11 +2381,6 @@ async function hitungSaldoLabaSebelumnyaNeracaFirebase(
 
     }
 
-
-    // ---------------------------------------------------------
-    // HITUNG AKUMULASI DARI 2020
-    // SAMPAI TAHUN SEBELUM TAHUN LAPORAN
-    // ---------------------------------------------------------
 
     let saldoLaba =
         0;
@@ -2282,10 +2456,6 @@ async function hitungSaldoLabaSebelumnyaNeracaFirebase(
     }
 
 
-    // ---------------------------------------------------------
-    // DEBUG
-    // ---------------------------------------------------------
-
     console.log(
         "Saldo Laba Sebelumnya:",
         saldoLaba
@@ -2309,38 +2479,31 @@ async function ambilDataNeracaFirebase(
     const hasil =
         await Promise.all([
 
-            // 0
             hitungSaldoMediaNeracaFirebase(
                 sampai
             ),
 
-            // 1
             hitungPiutangNeracaFirebase(
                 sampai
             ),
 
-            // 2
             hitungUtangNeracaFirebase(
                 sampai
             ),
 
-            // 3
             hitungAsetNeracaFirebase(
                 sampai
             ),
 
-            // 4
             hitungModalNeracaFirebase(
                 sampai
             ),
 
-            // 5
             hitungLabaRugiNeracaFirebase(
                 dari,
                 sampai
             ),
 
-            // 6
             hitungSaldoLabaSebelumnyaNeracaFirebase(
                 dari
             )
@@ -2559,6 +2722,18 @@ async function ambilDataNeracaFirebase(
     console.log(
         "Dana:",
         dana
+    );
+
+
+    console.log(
+        "Saldo Affiliate:",
+        saldoMedia.saldoAffiliate
+    );
+
+
+    console.log(
+        "Media Uang Neraca:",
+        saldoMedia.totalMediaUang
     );
 
 
@@ -2818,7 +2993,12 @@ async function ambilDataNeracaFirebase(
 
 
         // =============================================
-        // INFORMASI MEDIA
+        // INFORMASI AFFILIATE
+        // =============================================
+        //
+        // Tetap dikembalikan untuk informasi,
+        // tetapi TIDAK termasuk totalMediaUang.
+        //
         // =============================================
 
         saldoAffiliate:
@@ -2906,17 +3086,27 @@ console.log(
 
 
 console.log(
-    "NERACA: PENYUSUTAN HISTORIS AKTIF"
+    "NERACA: PENYUSUTAN BULANAN AKTIF"
 );
 
 
 console.log(
-    "NERACA: TAHUN PEROLEHAN TIDAK DIHITUNG"
+    "NERACA: BULAN PEROLEHAN TIDAK DIHITUNG"
 );
 
 
 console.log(
-    "NERACA: PENYUSUTAN DIMULAI TAHUN BERIKUTNYA"
+    "NERACA: PENYUSUTAN DIMULAI BULAN BERIKUTNYA"
+);
+
+
+console.log(
+    "NERACA: SALDO AFFILIATE BUKAN MEDIA UANG"
+);
+
+
+console.log(
+    "NERACA: AFFILIATE -> KAS HANYA MELALUI TRANSFER"
 );
 
 
@@ -2933,4 +3123,3 @@ console.log(
 console.log(
     "NERACA: TANPA FORCE BALANCE"
 );
-
