@@ -2163,6 +2163,7 @@ async function hapusSupplier(id) {
 
 // =========================================
 // MASTER DATA ASET
+// KEUANGAN BUMDES SUMBER REJEKI
 // =========================================
 
 
@@ -2215,6 +2216,7 @@ async function muatAset() {
     }
 
 }
+
 
 // =========================================
 // BUAT KODE ASET
@@ -2329,16 +2331,41 @@ async function simpanAset() {
         }
 
 
-        const inputTahun =
+        // =====================================
+        // TANGGAL PEROLEHAN
+        // =====================================
+
+        const inputTanggal =
             document.querySelector(
-                "#form-aset #asetTahunPerolehan"
+                "#form-aset #asetTanggalPerolehan"
             );
 
 
+        const tanggalPerolehan =
+            inputTanggal
+                ? inputTanggal.value
+                : "";
+
+
+        if (!tanggalPerolehan) {
+
+            alert(
+                "Tanggal perolehan wajib diisi."
+            );
+
+            return;
+
+        }
+
+
+        // =====================================
+        // TAHUN OTOMATIS DARI TANGGAL
+        // =====================================
+
         const tahunPerolehan =
-            inputTahun
-                ? Number(inputTahun.value)
-                : 0;
+            Number(
+                tanggalPerolehan.substring(0, 4)
+            );
 
 
         if (
@@ -2348,7 +2375,7 @@ async function simpanAset() {
         ) {
 
             alert(
-                "Tahun perolehan wajib diisi dengan benar."
+                "Tanggal perolehan tidak valid."
             );
 
             return;
@@ -2356,17 +2383,27 @@ async function simpanAset() {
         }
 
 
+        // =====================================
+        // BUAT KODE
+        // =====================================
+
         const kode =
             await buatKodeAset();
 
+
+        // =====================================
+        // DATA ASET
+        // =====================================
 
         const data = {
 
             kode:
                 kode,
 
+
             nama:
                 nama,
+
 
             jenis:
                 document.querySelector(
@@ -2374,14 +2411,21 @@ async function simpanAset() {
                 )?.value ||
                 "tetap",
 
+
             unitUsaha:
                 document.querySelector(
                     "#form-aset #asetUnitUsaha"
                 )?.value ||
                 "",
 
+
+            tanggalPerolehan:
+                tanggalPerolehan,
+
+
             tahunPerolehan:
                 tahunPerolehan,
+
 
             hargaPerolehan:
                 Number(
@@ -2390,12 +2434,14 @@ async function simpanAset() {
                     )?.value
                 ) || 0,
 
+
             umurManfaat:
                 Number(
                     document.querySelector(
                         "#form-aset #asetUmurManfaat"
                     )?.value
                 ) || 0,
+
 
             nilaiSisa:
                 Number(
@@ -2404,11 +2450,13 @@ async function simpanAset() {
                     )?.value
                 ) || 0,
 
+
             keterangan:
                 document.querySelector(
                     "#form-aset #asetKeterangan"
                 )?.value.trim() ||
                 "",
+
 
             status:
                 "aktif"
@@ -2421,6 +2469,10 @@ async function simpanAset() {
             data
         );
 
+
+        // =====================================
+        // SIMPAN KE FIREBASE
+        // =====================================
 
         const berhasil =
             await simpanMasterAsetFirebase(
@@ -2491,6 +2543,10 @@ async function updateAset(id) {
         }
 
 
+        // =====================================
+        // NAMA
+        // =====================================
+
         const inputNama =
             form.querySelector(
                 "#asetNama"
@@ -2520,16 +2576,41 @@ async function updateAset(id) {
         }
 
 
-        const inputTahun =
+        // =====================================
+        // TANGGAL PEROLEHAN
+        // =====================================
+
+        const inputTanggal =
             form.querySelector(
-                "#asetTahunPerolehan"
+                "#asetTanggalPerolehan"
             );
 
 
+        const tanggalPerolehan =
+            inputTanggal
+                ? inputTanggal.value
+                : "";
+
+
+        if (!tanggalPerolehan) {
+
+            alert(
+                "Tanggal perolehan wajib diisi."
+            );
+
+            return;
+
+        }
+
+
+        // =====================================
+        // TAHUN OTOMATIS DARI TANGGAL
+        // =====================================
+
         const tahunPerolehan =
-            inputTahun
-                ? Number(inputTahun.value)
-                : 0;
+            Number(
+                tanggalPerolehan.substring(0, 4)
+            );
 
 
         if (
@@ -2539,13 +2620,17 @@ async function updateAset(id) {
         ) {
 
             alert(
-                "Tahun perolehan wajib diisi dengan benar."
+                "Tanggal perolehan tidak valid."
             );
 
             return;
 
         }
 
+
+        // =====================================
+        // DATA ASET
+        // =====================================
 
         const data = {
 
@@ -2555,8 +2640,10 @@ async function updateAset(id) {
                 )?.value.trim() ||
                 "",
 
+
             nama:
                 nama,
+
 
             jenis:
                 form.querySelector(
@@ -2564,14 +2651,21 @@ async function updateAset(id) {
                 )?.value ||
                 "tetap",
 
+
             unitUsaha:
                 form.querySelector(
                     "#asetUnitUsaha"
                 )?.value ||
                 "",
 
+
+            tanggalPerolehan:
+                tanggalPerolehan,
+
+
             tahunPerolehan:
                 tahunPerolehan,
+
 
             hargaPerolehan:
                 Number(
@@ -2580,12 +2674,14 @@ async function updateAset(id) {
                     )?.value
                 ) || 0,
 
+
             umurManfaat:
                 Number(
                     form.querySelector(
                         "#asetUmurManfaat"
                     )?.value
                 ) || 0,
+
 
             nilaiSisa:
                 Number(
@@ -2594,11 +2690,13 @@ async function updateAset(id) {
                     )?.value
                 ) || 0,
 
+
             keterangan:
                 form.querySelector(
                     "#asetKeterangan"
                 )?.value.trim() ||
                 "",
+
 
             status:
                 form.querySelector(
@@ -2614,6 +2712,10 @@ async function updateAset(id) {
             data
         );
 
+
+        // =====================================
+        // UPDATE FIREBASE
+        // =====================================
 
         const berhasil =
             await updateMasterAsetFirebase(
@@ -2658,6 +2760,8 @@ async function updateAset(id) {
     }
 
 }
+
+
 // =========================================
 // HAPUS ASET
 // =========================================
@@ -2687,9 +2791,9 @@ async function hapusAset(id) {
 
 
         const berhasil =
-    await hapusMasterAsetFirebase(
-        id
-    );
+            await hapusMasterAsetFirebase(
+                id
+            );
 
 
         if (!berhasil) {
@@ -2728,10 +2832,6 @@ async function hapusAset(id) {
 }
 
 
- 
-
-
-
 // =========================================
 // GLOBAL
 // =========================================
@@ -2739,86 +2839,146 @@ async function hapusAset(id) {
 window.siapkanHalamanMasterData =
     siapkanHalamanMasterData;
 
+
 window.bukaMasterUnitUsaha =
     bukaMasterUnitUsaha;
+
 
 window.bukaMasterAkun =
     bukaMasterAkun;
 
+
 window.bukaMasterPihak =
     bukaMasterPihak;
 
+
 window.bukaMasterSupplier =
     bukaMasterSupplier;
+
 
 window.bukaMasterAset =
     bukaMasterAset;
 
+
 window.simpanUnitUsaha =
     simpanUnitUsaha;
+
 
 window.updateUnitUsaha =
     updateUnitUsaha;
 
+
 window.hapusUnitUsaha =
     hapusUnitUsaha;
+
 
 window.muatAkun =
     muatAkun;
 
+
 window.simpanAkun =
     simpanAkun;
+
 
 window.updateAkun =
     updateAkun;
 
+
 window.hapusAkun =
     hapusAkun;
+
 
 window.pasangMasterUnitUsahaResmi =
     pasangMasterUnitUsahaResmi;
 
+
 window.pasangMasterAkunResmi =
     pasangMasterAkunResmi;
+
 
 window.prosesLengkapiUnitUsahaAkunPendapatan =
     prosesLengkapiUnitUsahaAkunPendapatan;
 
+
 window.prosesLengkapiUnitUsahaAkunBeban =
     prosesLengkapiUnitUsahaAkunBeban;
-	
+
+
+// =========================================
+// MASTER PIHAK / PELANGGAN
+// =========================================
+
 window.bukaMasterPihak =
     bukaMasterPihak;
+
 
 window.muatPelanggan =
     muatPelanggan;
 
+
 window.buatKodePelanggan =
     buatKodePelanggan;
+
 
 window.simpanPelanggan =
     simpanPelanggan;
 
+
 window.updatePelanggan =
     updatePelanggan;
 
+
 window.hapusPelanggan =
     hapusPelanggan;
-	
+
+
+// =========================================
+// MASTER SUPPLIER
+// =========================================
+
 window.bukaMasterSupplier =
     bukaMasterSupplier;
+
 
 window.muatSupplier =
     muatSupplier;
 
+
 window.buatKodeSupplier =
     buatKodeSupplier;
+
 
 window.simpanSupplier =
     simpanSupplier;
 
+
 window.updateSupplier =
     updateSupplier;
 
+
 window.hapusSupplier =
     hapusSupplier;
+
+
+// =========================================
+// MASTER ASET
+// =========================================
+
+window.simpanAset =
+    simpanAset;
+
+
+window.updateAset =
+    updateAset;
+
+
+window.hapusAset =
+    hapusAset;
+
+
+window.buatKodeAset =
+    buatKodeAset;
+
+
+window.muatAset =
+    muatAset;

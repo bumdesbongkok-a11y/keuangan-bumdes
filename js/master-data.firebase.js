@@ -2608,40 +2608,62 @@ async function simpanMasterAsetFirebase(data) {
             kode:
                 data.kode || "",
 
+
             nama:
                 data.nama || "",
+
 
             jenis:
                 data.jenis || "tetap",
 
+
             unitUsaha:
                 data.unitUsaha || "",
+
+
+            // =================================
+            // TANGGAL PEROLEHAN
+            // =================================
+
+            tanggalPerolehan:
+                data.tanggalPerolehan || "",
+
+
+            // =================================
+            // TAHUN PEROLEHAN
+            // =================================
 
             tahunPerolehan:
                 Number(
                     data.tahunPerolehan
                 ) || 0,
 
+
             hargaPerolehan:
                 Number(
                     data.hargaPerolehan
                 ) || 0,
+
 
             umurManfaat:
                 Number(
                     data.umurManfaat
                 ) || 0,
 
+
             nilaiSisa:
                 Number(
                     data.nilaiSisa
                 ) || 0,
 
+
             keterangan:
                 data.keterangan || "",
 
+
             status:
                 data.status || "aktif",
+
 
             dibuatPada:
                 serverTimestamp()
@@ -2666,10 +2688,12 @@ async function simpanMasterAsetFirebase(data) {
             "Aset berhasil disimpan."
         );
 
+
         console.log(
             "ID aset:",
             docRef.id
         );
+
 
         console.log(
             "Data master aset:",
@@ -2686,6 +2710,7 @@ async function simpanMasterAsetFirebase(data) {
             "Simpan aset gagal:",
             error
         );
+
 
         return false;
 
@@ -2736,40 +2761,62 @@ async function updateMasterAsetFirebase(
             kode:
                 data.kode || "",
 
+
             nama:
                 data.nama || "",
+
 
             jenis:
                 data.jenis || "tetap",
 
+
             unitUsaha:
                 data.unitUsaha || "",
+
+
+            // =================================
+            // TANGGAL PEROLEHAN
+            // =================================
+
+            tanggalPerolehan:
+                data.tanggalPerolehan || "",
+
+
+            // =================================
+            // TAHUN PEROLEHAN
+            // =================================
 
             tahunPerolehan:
                 Number(
                     data.tahunPerolehan
                 ) || 0,
 
+
             hargaPerolehan:
                 Number(
                     data.hargaPerolehan
                 ) || 0,
+
 
             umurManfaat:
                 Number(
                     data.umurManfaat
                 ) || 0,
 
+
             nilaiSisa:
                 Number(
                     data.nilaiSisa
                 ) || 0,
 
+
             keterangan:
                 data.keterangan || "",
 
+
             status:
                 data.status || "aktif",
+
 
             diubahPada:
                 new Date()
@@ -2794,6 +2841,7 @@ async function updateMasterAsetFirebase(
             "Aset berhasil diperbarui."
         );
 
+
         console.log(
             "Data master aset:",
             dataUpdate
@@ -2810,12 +2858,12 @@ async function updateMasterAsetFirebase(
             error
         );
 
+
         return false;
 
     }
 
 }
-
 
 // =========================================
 // HAPUS ASET
@@ -3035,25 +3083,59 @@ async function ambilLaporanAsetFirebase(sampai) {
                 doc.data();
 
 
-            const tanggal =
-                String(
-                    item.tanggalPerolehan || ""
-                ).substring(0, 10);
-
-
             // =================================
-            // BATAS TANGGAL LAPORAN
-            // =================================
+// TANGGAL / TAHUN PEROLEHAN
+// =================================
 
-            if (
-                sampai &&
-                tanggal &&
-                tanggal > sampai
-            ) {
+let tanggal =
+    String(
+        item.tanggalPerolehan || ""
+    ).substring(0, 10);
 
-                return;
 
-            }
+// =================================
+// FALLBACK DATA LAMA
+// =================================
+//
+// Jika aset lama belum memiliki
+// tanggalPerolehan, gunakan
+// tahunPerolehan sebagai batas.
+// =================================
+
+if (
+    !tanggal ||
+    tanggal === "-"
+) {
+
+    const tahun =
+        Number(
+            item.tahunPerolehan
+        ) || 0;
+
+
+    if (tahun > 0) {
+
+        tanggal =
+            tahun + "-01-01";
+
+    }
+
+}
+
+
+// =================================
+// BATAS TANGGAL LAPORAN
+// =================================
+
+if (
+    sampai &&
+    tanggal &&
+    tanggal > sampai
+) {
+
+    return;
+
+}
 
 
             // =================================

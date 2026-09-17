@@ -3116,6 +3116,11 @@ async function formTambahAset() {
                 Tambah Aset
             </h4>
 
+
+            <!-- ========================= -->
+            <!-- KODE ASET -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3131,6 +3136,11 @@ async function formTambahAset() {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- NAMA ASET -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3144,6 +3154,11 @@ async function formTambahAset() {
                 >
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- JENIS ASET -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3167,6 +3182,11 @@ async function formTambahAset() {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- UNIT USAHA -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3185,25 +3205,58 @@ async function formTambahAset() {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- TANGGAL PEROLEHAN -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
-    <label>
-        Tahun Perolehan
-    </label>
+                <label>
+                    Tanggal Perolehan
+                </label>
 
-    <input
-        type="number"
-        id="asetTahunPerolehan"
-        min="1900"
-        max="2100"
-        placeholder="Contoh: 2024"
-    >
+                <input
+                    type="date"
+                    id="asetTanggalPerolehan"
+                >
 
-    <small>
-        Penyusutan dimulai pada tahun berikutnya.
-    </small>
+                <small>
+                    Tanggal aset diperoleh atau dibeli.
+                </small>
 
-</div>
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- TAHUN PEROLEHAN -->
+            <!-- ========================= -->
+
+            <div class="form-group">
+
+                <label>
+                    Tahun Perolehan
+                </label>
+
+                <input
+                    type="number"
+                    id="asetTahunPerolehan"
+                    min="1900"
+                    max="2100"
+                    placeholder="Otomatis"
+                    readonly
+                >
+
+                <small>
+                    Tahun otomatis mengikuti tanggal perolehan.
+                </small>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- HARGA PEROLEHAN -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3220,6 +3273,11 @@ async function formTambahAset() {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- UMUR MANFAAT -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3234,10 +3292,15 @@ async function formTambahAset() {
                 >
 
                 <small>
-                    Dalam tahun
+                    Dalam tahun.
                 </small>
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- NILAI SISA -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3254,6 +3317,11 @@ async function formTambahAset() {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- KETERANGAN -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3267,6 +3335,11 @@ async function formTambahAset() {
                 ></textarea>
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- TOMBOL -->
+            <!-- ========================= -->
 
             <button
                 type="button"
@@ -3290,6 +3363,47 @@ async function formTambahAset() {
 
 
     await muatDropdownUnitUsahaAset();
+
+
+    // =========================================
+    // OTOMATIS TAHUN DARI TANGGAL
+    // =========================================
+
+    const inputTanggal =
+        document.getElementById(
+            "asetTanggalPerolehan"
+        );
+
+    const inputTahun =
+        document.getElementById(
+            "asetTahunPerolehan"
+        );
+
+
+    if (
+        inputTanggal &&
+        inputTahun
+    ) {
+
+        inputTanggal.addEventListener(
+            "change",
+            function() {
+
+                if (this.value) {
+
+                    inputTahun.value =
+                        this.value.substring(0, 4);
+
+                } else {
+
+                    inputTahun.value = "";
+
+                }
+
+            }
+        );
+
+    }
 
 }
 
@@ -3430,7 +3544,9 @@ function tampilDataAset(data) {
         );
 
     if (!container) {
+
         return;
+
     }
 
 
@@ -3478,7 +3594,7 @@ function tampilDataAset(data) {
                 <table
                     style="
                         width:100%;
-                        min-width:1100px;
+                        min-width:1200px;
                         border-collapse:collapse;
                     "
                 >
@@ -3496,6 +3612,7 @@ function tampilDataAset(data) {
                                 Kode
                             </th>
 
+
                             <th
                                 style="
                                     border:1px solid #ddd;
@@ -3504,6 +3621,7 @@ function tampilDataAset(data) {
                             >
                                 Nama Aset
                             </th>
+
 
                             <th
                                 style="
@@ -3514,6 +3632,7 @@ function tampilDataAset(data) {
                                 Jenis
                             </th>
 
+
                             <th
                                 style="
                                     border:1px solid #ddd;
@@ -3523,55 +3642,80 @@ function tampilDataAset(data) {
                                 Unit Usaha
                             </th>
 
+
                             <th
                                 style="
                                     border:1px solid #ddd;
                                     padding:8px;
+                                    white-space:nowrap;
+                                "
+                            >
+                                Tanggal Perolehan
+                            </th>
+
+
+                            <th
+                                style="
+                                    border:1px solid #ddd;
+                                    padding:8px;
+                                    text-align:center;
                                 "
                             >
                                 Tahun
                             </th>
 
+
                             <th
                                 style="
                                     border:1px solid #ddd;
                                     padding:8px;
+                                    white-space:nowrap;
                                 "
                             >
                                 Harga Perolehan
                             </th>
 
+
                             <th
                                 style="
                                     border:1px solid #ddd;
                                     padding:8px;
+                                    text-align:center;
+                                    white-space:nowrap;
                                 "
                             >
                                 Umur
                             </th>
 
+
                             <th
                                 style="
                                     border:1px solid #ddd;
                                     padding:8px;
+                                    white-space:nowrap;
                                 "
                             >
                                 Nilai Sisa
                             </th>
 
-                            <th
-                                style="
-                                    border:1px solid #ddd;
-                                    padding:8px;
-                                "
-                            >
-                                Status
-                            </th>
 
                             <th
                                 style="
                                     border:1px solid #ddd;
                                     padding:8px;
+                                    text-align:center;
+                                "
+                            >
+                                Status
+                            </th>
+
+
+                            <th
+                                style="
+                                    border:1px solid #ddd;
+                                    padding:8px;
+                                    text-align:center;
+                                    white-space:nowrap;
                                 "
                             >
                                 Aksi
@@ -3580,6 +3724,7 @@ function tampilDataAset(data) {
                         </tr>
 
                     </thead>
+
 
                     <tbody>
     `;
@@ -3615,6 +3760,43 @@ function tampilDataAset(data) {
             item.jenis === "tetap"
                 ? "Aset Tetap"
                 : "Aset Lainnya";
+
+
+        let tanggalTampil = "-";
+
+
+        if (
+            item.tanggalPerolehan
+        ) {
+
+            const tanggal =
+                String(
+                    item.tanggalPerolehan
+                ).substring(0, 10);
+
+
+            if (tanggal) {
+
+                const bagian =
+                    tanggal.split("-");
+
+
+                if (
+                    bagian.length === 3
+                ) {
+
+                    tanggalTampil =
+                        bagian[2] +
+                        "/" +
+                        bagian[1] +
+                        "/" +
+                        bagian[0];
+
+                }
+
+            }
+
+        }
 
 
         html += `
@@ -3660,6 +3842,18 @@ function tampilDataAset(data) {
                     "
                 >
                     ${item.unitUsaha || "-"}
+                </td>
+
+
+                <td
+                    style="
+                        border:1px solid #ddd;
+                        padding:8px;
+                        text-align:center;
+                        white-space:nowrap;
+                    "
+                >
+                    ${tanggalTampil}
                 </td>
 
 
@@ -3780,6 +3974,7 @@ function tampilDataAset(data) {
 
 }
 
+
 // =========================================
 // FORM EDIT ASET
 // =========================================
@@ -3806,11 +4001,17 @@ async function formEditAset(item) {
                 Edit Aset
             </h4>
 
+
             <input
                 type="hidden"
                 id="asetId"
                 value="${item.id || ""}"
             >
+
+
+            <!-- ========================= -->
+            <!-- KODE ASET -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3827,6 +4028,11 @@ async function formEditAset(item) {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- NAMA ASET -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3840,6 +4046,11 @@ async function formEditAset(item) {
                 >
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- JENIS ASET -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3862,6 +4073,7 @@ async function formEditAset(item) {
                         Aset Tetap
                     </option>
 
+
                     <option
                         value="lainnya"
                         ${
@@ -3876,6 +4088,11 @@ async function formEditAset(item) {
                 </select>
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- UNIT USAHA -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3895,29 +4112,63 @@ async function formEditAset(item) {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- TANGGAL PEROLEHAN -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
-    <label>
-        Tahun Perolehan
-    </label>
+                <label>
+                    Tanggal Perolehan
+                </label>
 
-    <input
-        type="number"
-        id="asetTahunPerolehan"
-        min="1900"
-        max="2100"
-        value="${
-            Number(
-                item.tahunPerolehan
-            ) || ""
-        }"
-    >
+                <input
+                    type="date"
+                    id="asetTanggalPerolehan"
+                    value="${item.tanggalPerolehan || ""}"
+                >
 
-    <small>
-        Penyusutan dimulai pada tahun berikutnya.
-    </small>
+                <small>
+                    Tanggal aset diperoleh atau dibeli.
+                </small>
 
-</div>
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- TAHUN PEROLEHAN -->
+            <!-- ========================= -->
+
+            <div class="form-group">
+
+                <label>
+                    Tahun Perolehan
+                </label>
+
+                <input
+                    type="number"
+                    id="asetTahunPerolehan"
+                    min="1900"
+                    max="2100"
+                    value="${
+                        Number(
+                            item.tahunPerolehan
+                        ) || ""
+                    }"
+                    readonly
+                >
+
+                <small>
+                    Tahun otomatis mengikuti tanggal perolehan.
+                </small>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- HARGA PEROLEHAN -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3938,6 +4189,11 @@ async function formEditAset(item) {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- UMUR MANFAAT -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3956,10 +4212,15 @@ async function formEditAset(item) {
                 >
 
                 <small>
-                    Dalam tahun
+                    Dalam tahun.
                 </small>
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- NILAI SISA -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -3980,6 +4241,11 @@ async function formEditAset(item) {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- KETERANGAN -->
+            <!-- ========================= -->
+
             <div class="form-group">
 
                 <label>
@@ -3992,6 +4258,11 @@ async function formEditAset(item) {
                 >${item.keterangan || ""}</textarea>
 
             </div>
+
+
+            <!-- ========================= -->
+            <!-- STATUS -->
+            <!-- ========================= -->
 
             <div class="form-group">
 
@@ -4014,6 +4285,7 @@ async function formEditAset(item) {
                         Aktif
                     </option>
 
+
                     <option
                         value="nonaktif"
                         ${
@@ -4029,6 +4301,11 @@ async function formEditAset(item) {
 
             </div>
 
+
+            <!-- ========================= -->
+            <!-- TOMBOL -->
+            <!-- ========================= -->
+
             <button
                 type="button"
                 class="btn-simpan"
@@ -4038,6 +4315,7 @@ async function formEditAset(item) {
             >
                 Simpan Perubahan
             </button>
+
 
             <button
                 type="button"
@@ -4055,6 +4333,47 @@ async function formEditAset(item) {
     await muatDropdownUnitUsahaAset(
         item.unitUsaha || ""
     );
+
+
+    // =========================================
+    // OTOMATIS TAHUN DARI TANGGAL
+    // =========================================
+
+    const inputTanggal =
+        document.getElementById(
+            "asetTanggalPerolehan"
+        );
+
+    const inputTahun =
+        document.getElementById(
+            "asetTahunPerolehan"
+        );
+
+
+    if (
+        inputTanggal &&
+        inputTahun
+    ) {
+
+        inputTanggal.addEventListener(
+            "change",
+            function() {
+
+                if (this.value) {
+
+                    inputTahun.value =
+                        this.value.substring(0, 4);
+
+                } else {
+
+                    inputTahun.value = "";
+
+                }
+
+            }
+        );
+
+    }
 
 }
 
@@ -4080,6 +4399,8 @@ window.formEditAset =
 
 window.muatDropdownUnitUsahaAset =
     muatDropdownUnitUsahaAset;
+
+
 
 
 // =========================================
