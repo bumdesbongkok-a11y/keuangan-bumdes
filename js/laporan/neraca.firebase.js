@@ -2500,9 +2500,9 @@ async function ambilDataNeracaFirebase(
             ),
 
             hitungLabaRugiNeracaFirebase(
-                dari,
-                sampai
-            ),
+    `${new Date(sampai + "T00:00:00").getFullYear()}-01-01`,
+    sampai
+),
 
             hitungSaldoLabaSebelumnyaNeracaFirebase(
                 dari
