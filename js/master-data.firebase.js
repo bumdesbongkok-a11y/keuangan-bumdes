@@ -3010,253 +3010,482 @@ async function cekKodeMasterAsetFirebase(kode, kecualiId) {
 
  // =========================================
 // LAPORAN ASET
-// SUMBER DATA: masterAset
+// SUMBER DATA:
+// TRANSAKSI ASET + MASTER ASET
+// MENGIKUTI LOGIKA NERACA
 // =========================================
 
 async function ambilLaporanAsetFirebase(sampai) {
 
     try {
 
-        if (!window.db) {
+        // =====================================
+        // AMBIL DATA TRANSAKSI
+        // =====================================
 
-            throw new Error(
-                "Firebase Firestore belum tersedia."
+        const transaksi =
+            await loadCollectionNeraca(
+                COLLECTION.TRANSAKSI
             );
 
-        }
-
-
-        const {
-            collection,
-            getDocs,
-            query,
-            orderBy
-        } = await import(
-            "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js"
-        );
-
 
         // =====================================
-        // SUMBER DATA MASTER ASET
+        // AMBIL MASTER ASET
         // =====================================
 
-        const ref =
-            collection(
-                window.db,
+        const masterAset =
+            await loadCollectionNeraca(
                 "masterAset"
             );
 
 
         // =====================================
-        // URUTKAN BERDASARKAN NAMA
+        // INDEX MASTER ASET BERDASARKAN ID
         // =====================================
 
-        const q =
-            query(
-                ref,
-                orderBy(
-                    "nama",
-                    "asc"
-                )
+        const masterById = {};
+
+
+        masterAset.forEach(
+            function(item) {
+
+                if (
+                    item.id
+                ) {
+
+                    masterById[item.id] =
+                        item;
+
+                }
+
+            }
+        );
+
+
+        // =====================================
+        // BATAS TANGGAL LAPORAN
+        // =====================================
+
+        const tanggalLaporan =
+            new Date(
+                sampai + "T23:59:59"
             );
 
 
-        const snapshot =
-            await getDocs(q);
+        const bulanLaporan =
+            new Date(
+                tanggalLaporan.getFullYear(),
+                tanggalLaporan.getMonth(),
+                1
+            );
+
+
+        // =====================================
+        // TOTAL
+        // =====================================
+
+        let totalNilaiPerolehan = 0;
+
+        let totalAkumulasiPenyusutan = 0;
+
+        let totalNilaiBuku = 0;
 
 
         const data = [];
 
 
-        let totalNilaiPerolehan = 0;
-
-        let totalNilaiBuku = 0;
-
-
         // =====================================
-        // PROSES DATA
+        // FILTER TRANSAKSI ASET
         // =====================================
 
-        snapshot.forEach(function(doc) {
+        const transaksiAset =
+            transaksi.filter(
+                function(item) {
 
-            const item =
-                doc.data();
+                    return (
+                        transaksiAdalahAsetNeraca(
+                            item
+                        ) &&
+                        transaksiSampaiTanggalNeraca(
+                            item.tanggal,
+                            sampai
+                        )
+                    );
 
-
-            // =================================
-// TANGGAL / TAHUN PEROLEHAN
-// =================================
-
-let tanggal =
-    String(
-        item.tanggalPerolehan || ""
-    ).substring(0, 10);
-
-
-// =================================
-// FALLBACK DATA LAMA
-// =================================
-//
-// Jika aset lama belum memiliki
-// tanggalPerolehan, gunakan
-// tahunPerolehan sebagai batas.
-// =================================
-
-if (
-    !tanggal ||
-    tanggal === "-"
-) {
-
-    const tahun =
-        Number(
-            item.tahunPerolehan
-        ) || 0;
-
-
-    if (tahun > 0) {
-
-        tanggal =
-            tahun + "-01-01";
-
-    }
-
-}
-
-
-// =================================
-// BATAS TANGGAL LAPORAN
-// =================================
-
-if (
-    sampai &&
-    tanggal &&
-    tanggal > sampai
-) {
-
-    return;
-
-}
-
-
-            // =================================
-            // HARGA PEROLEHAN
-            // =================================
-
-            const hargaPerolehan =
-                Number(
-                    item.hargaPerolehan
-                ) || 0;
-
-
-            // =================================
-            // NILAI BUKU
-            // =================================
-            //
-            // Untuk saat ini belum menghitung
-            // penyusutan.
-            //
-            // Jadi nilai buku = harga perolehan.
-            //
-            // =================================
-
-            const nilaiBuku =
-                hargaPerolehan;
-
-
-            // =================================
-            // NILAI SISA
-            // =================================
-
-            const nilaiSisa =
-                Number(
-                    item.nilaiSisa
-                ) || 0;
-
-
-            // =================================
-            // TOTAL
-            // =================================
-
-            totalNilaiPerolehan +=
-                hargaPerolehan;
-
-
-            totalNilaiBuku +=
-                nilaiBuku;
-
-
-            // =================================
-            // DATA LAPORAN
-            // =================================
-
-            data.push({
-
-                id:
-                    doc.id,
-
-                kode:
-                    item.kode ||
-                    "-",
-
-                tanggal:
-                    tanggal,
-
-                nama:
-                    item.nama ||
-                    "-",
-
-                jenis:
-                    item.jenis ||
-                    "-",
-
-                unitUsaha:
-                    item.unitUsaha ||
-                    "-",
-
-                hargaPerolehan:
-                    hargaPerolehan,
-
-                umurManfaat:
-                    Number(
-                        item.umurManfaat
-                    ) || 0,
-
-                nilaiSisa:
-                    nilaiSisa,
-
-                kondisi:
-                    item.kondisi ||
-                    "BAIK",
-
-                status:
-                    item.status ||
-                    "aktif",
-
-                keterangan:
-                    item.keterangan ||
-                    "",
-
-                nilaiBuku:
-                    nilaiBuku
-
-            });
-
-        });
-
-
-        // =====================================
-        // URUTKAN TANGGAL
-        // =====================================
-
-        data.sort(function(a, b) {
-
-            return String(
-                a.tanggal
-            ).localeCompare(
-                String(b.tanggal)
+                }
             );
 
-        });
+
+        // =====================================
+        // PROSES SETIAP ASET
+        // =====================================
+
+        transaksiAset.forEach(
+            function(transaksiItem) {
+
+                const asetId =
+                    transaksiItem.asetId ||
+                    null;
+
+
+                const master =
+                    masterById[
+                        asetId
+                    ] || null;
+
+
+                // =================================
+                // PARAMETER ASET
+                // =================================
+
+                const parameter =
+                    parameterAsetNeraca(
+                        transaksiItem,
+                        master
+                    );
+
+
+                const harga =
+                    parameter.harga;
+
+
+                const nilaiSisa =
+                    parameter.nilaiSisa;
+
+
+                const umurManfaat =
+                    parameter.umurManfaat;
+
+
+                // =================================
+                // TANGGAL PEROLEHAN
+                // =================================
+
+                const tanggalPerolehan =
+                    tanggalPerolehanAsetNeraca(
+                        transaksiItem,
+                        master
+                    );
+
+
+                if (
+                    !tanggalPerolehan
+                ) {
+
+                    return;
+
+                }
+
+
+                // =================================
+                // IDENTITAS ASET
+                // =================================
+
+                const namaAset =
+                    transaksiItem.namaAset ||
+                    transaksiItem.nama ||
+                    master?.namaAset ||
+                    master?.nama ||
+                    transaksiItem.keterangan ||
+                    "-";
+
+
+                const kodeAset =
+                    transaksiItem.kodeAset ||
+                    master?.kodeAset ||
+                    master?.kode ||
+                    "-";
+
+
+                const jenis =
+                    master?.jenis ||
+                    transaksiItem.jenis ||
+                    "-";
+
+
+                const unitUsaha =
+                    transaksiItem.unitUsaha ||
+                    master?.unitUsaha ||
+                    "-";
+
+
+                // =================================
+                // UMUR MANFAAT
+                // =================================
+
+                const umurManfaatBulan =
+                    umurManfaat * 12;
+
+
+                // =================================
+                // DEFAULT
+                // =================================
+
+                let depresiasiBulanan = 0;
+
+                let jumlahBulan = 0;
+
+                let akumulasiDepresiasi = 0;
+
+
+                // =================================
+                // HITUNG PENYUSUTAN
+                // =================================
+
+                if (
+                    harga > 0 &&
+                    umurManfaat > 0 &&
+                    harga > nilaiSisa
+                ) {
+
+                    depresiasiBulanan =
+                        (
+                            harga -
+                            nilaiSisa
+                        ) /
+                        umurManfaatBulan;
+
+
+                    // =================================
+                    // PENYUSUTAN DIMULAI
+                    // BULAN BERIKUTNYA
+                    // =================================
+
+                    const bulanMulaiDepresiasi =
+                        new Date(
+                            tanggalPerolehan.getFullYear(),
+                            tanggalPerolehan.getMonth() + 1,
+                            1
+                        );
+
+
+                    // =================================
+                    // HITUNG JUMLAH BULAN
+                    // =================================
+
+                    if (
+                        bulanLaporan >=
+                        bulanMulaiDepresiasi
+                    ) {
+
+                        jumlahBulan =
+                            (
+                                (
+                                    bulanLaporan.getFullYear() -
+                                    bulanMulaiDepresiasi.getFullYear()
+                                ) * 12
+                            ) +
+                            (
+                                bulanLaporan.getMonth() -
+                                bulanMulaiDepresiasi.getMonth()
+                            ) +
+                            1;
+
+                    }
+
+
+                    // =================================
+                    // BATAS UMUR MANFAAT
+                    // =================================
+
+                    jumlahBulan =
+                        Math.min(
+                            Math.max(
+                                0,
+                                jumlahBulan
+                            ),
+                            umurManfaatBulan
+                        );
+
+
+                    // =================================
+                    // AKUMULASI PENYUSUTAN
+                    // =================================
+
+                    const maksimumDepresiasi =
+                        harga -
+                        nilaiSisa;
+
+
+                    akumulasiDepresiasi =
+                        Math.min(
+                            depresiasiBulanan *
+                            jumlahBulan,
+                            maksimumDepresiasi
+                        );
+
+                }
+
+
+                // =================================
+                // NILAI BUKU
+                // =================================
+
+                const nilaiBuku =
+                    Math.max(
+                        nilaiSisa,
+                        harga -
+                        akumulasiDepresiasi
+                    );
+
+
+                // =================================
+                // STATUS
+                // =================================
+
+                let statusPenyusutan;
+
+
+                if (
+                    harga <= 0
+                ) {
+
+                    statusPenyusutan =
+                        "HARGA PEROLEHAN TIDAK ADA";
+
+                }
+                else if (
+                    umurManfaat <= 0
+                ) {
+
+                    statusPenyusutan =
+                        "UMUR MANFAAT TIDAK ADA";
+
+                }
+                else if (
+                    bulanLaporan <
+                    new Date(
+                        tanggalPerolehan.getFullYear(),
+                        tanggalPerolehan.getMonth() + 1,
+                        1
+                    )
+                ) {
+
+                    statusPenyusutan =
+                        "BELUM MULAI DISUSUTKAN";
+
+                }
+                else if (
+                    jumlahBulan >=
+                    umurManfaatBulan
+                ) {
+
+                    statusPenyusutan =
+                        "MASA MANFAAT HABIS";
+
+                }
+                else {
+
+                    statusPenyusutan =
+                        "MASIH DISUSUTKAN";
+
+                }
+
+
+                // =================================
+                // TOTAL
+                // =================================
+
+                totalNilaiPerolehan +=
+                    harga;
+
+
+                totalAkumulasiPenyusutan +=
+                    akumulasiDepresiasi;
+
+
+                totalNilaiBuku +=
+                    nilaiBuku;
+
+
+                // =================================
+                // MASUKKAN DATA
+                // =================================
+
+                data.push({
+
+                    id:
+                        transaksiItem.id,
+
+                    transaksiId:
+                        transaksiItem.id,
+
+                    asetId,
+
+                    kode:
+                        kodeAset,
+
+                    kodeAset,
+
+                    tanggal:
+                        tanggalPerolehan
+                            .toISOString()
+                            .substring(0, 10),
+
+                    nama:
+                        namaAset,
+
+                    jenis,
+
+                    unitUsaha,
+
+                    hargaPerolehan:
+                        harga,
+						
+					nilaiPerolehan:
+						harga,
+
+                    umurManfaat,
+
+                    umurManfaatBulan,
+
+                    nilaiSisa,
+
+                    depresiasiBulanan,
+
+                    jumlahBulan,
+
+                    akumulasiDepresiasi,
+
+                    nilaiBuku,
+
+                    statusPenyusutan,
+
+                    kondisi:
+                        master?.kondisi ||
+                        "BAIK",
+
+                    status:
+                        master?.status ||
+                        "aktif",
+
+                    keterangan:
+                        transaksiItem.keterangan ||
+                        master?.keterangan ||
+                        ""
+
+                });
+
+
+            }
+        );
+
+
+        // =====================================
+        // URUTKAN BERDASARKAN TANGGAL
+        // =====================================
+
+        data.sort(
+            function(a, b) {
+
+                return String(
+                    a.tanggal
+                ).localeCompare(
+                    String(b.tanggal)
+                );
+
+            }
+        );
 
 
         // =====================================
@@ -3268,17 +3497,16 @@ if (
             sampai:
                 sampai || null,
 
-            data:
-                data,
+            data,
 
             jumlahAset:
                 data.length,
 
-            totalNilaiPerolehan:
-                totalNilaiPerolehan,
+            totalNilaiPerolehan,
 
-            totalNilaiBuku:
-                totalNilaiBuku,
+            totalAkumulasiPenyusutan,
+
+            totalNilaiBuku,
 
             total:
                 totalNilaiBuku
@@ -3286,9 +3514,50 @@ if (
         };
 
 
+        // =====================================
+        // DEBUG
+        // =====================================
+
         console.log(
-            "Laporan Aset berhasil:",
-            hasil
+            "================================="
+        );
+
+        console.log(
+            "LAPORAN ASET"
+        );
+
+        console.log(
+            "Periode sampai:",
+            sampai
+        );
+
+        console.log(
+            "Jumlah aset:",
+            hasil.jumlahAset
+        );
+
+        console.log(
+            "Total perolehan:",
+            totalNilaiPerolehan
+        );
+
+        console.log(
+            "Total akumulasi penyusutan:",
+            totalAkumulasiPenyusutan
+        );
+
+        console.log(
+            "Total nilai buku:",
+            totalNilaiBuku
+        );
+
+        console.log(
+            "Data aset:",
+            data
+        );
+
+        console.log(
+            "================================="
         );
 
 
@@ -3308,14 +3577,6 @@ if (
     }
 
 }
-
-
-// =========================================
-// EXPORT LAPORAN ASET
-// =========================================
-
-window.ambilLaporanAsetFirebase =
-    ambilLaporanAsetFirebase;
 
 
 // =========================================
