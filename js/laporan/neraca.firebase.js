@@ -976,15 +976,17 @@ async function hitungPiutangNeracaFirebase(
     const data =
         await loadPiutangNeracaFirebase();
 
-
-    let total = 0;
-
+    let totalPiutang = 0;
 
     const batas =
         new Date(
             sampai + "T23:59:59"
         );
 
+    // =========================================
+    // 1. HITUNG SELURUH PIUTANG YANG SUDAH
+    //    TERJADI SAMPAI TANGGAL NERACA
+    // =========================================
 
     data.forEach(
         function(item) {
@@ -992,35 +994,120 @@ async function hitungPiutangNeracaFirebase(
             const tanggal =
                 tanggalNeraca(item);
 
-
             if (!tanggal) {
                 return;
             }
 
-
-            if (
-                tanggal > batas
-            ) {
-
+            // Piutang yang muncul setelah
+            // tanggal Neraca belum dihitung
+            if (tanggal > batas) {
                 return;
-
             }
 
-
-            total +=
+            totalPiutang +=
                 Number(
-                    item.sisa ??
-                    item.saldo ??
-                    item.nominalSisa ??
-                    0
+                    item.nominal
                 ) || 0;
 
         }
     );
 
 
-    return total;
+    // =========================================
+    // 2. AMBIL TRANSAKSI PEMBAYARAN PIUTANG
+    // =========================================
 
+    const {
+
+        collection,
+        getDocs,
+        query,
+        where
+
+    } = await getFirestorePiutang();
+
+
+    const ref =
+        collection(
+            window.db,
+            COLLECTION.TRANSAKSI
+        );
+
+
+    const q =
+        query(
+            ref,
+            where(
+                "sumber",
+                "==",
+                "PIUTANG"
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    // =========================================
+    // 3. KURANGI PEMBAYARAN YANG SUDAH TERJADI
+    //    SAMPAI TANGGAL NERACA
+    // =========================================
+
+    snapshot.forEach(
+        function(docSnapshot) {
+
+            const item =
+                docSnapshot.data();
+
+            // Hanya transaksi PEMASUKAN
+            if (
+                item.jenisTransaksi !==
+                JENIS_TRANSAKSI.PEMASUKAN
+            ) {
+                return;
+            }
+
+            // Pastikan benar-benar pembayaran piutang
+            if (
+                item.akunKode !==
+                "PIUTANG"
+            ) {
+                return;
+            }
+
+            const tanggal =
+                tanggalNeraca(item);
+
+            if (!tanggal) {
+                return;
+            }
+
+            // Pembayaran setelah tanggal Neraca
+            // BELUM boleh mengurangi piutang
+            if (tanggal > batas) {
+                return;
+            }
+
+            totalPiutang -=
+                Number(
+                    item.nominal
+                ) || 0;
+
+        }
+    );
+
+
+    // =========================================
+    // 4. PENGAMAN
+    // =========================================
+
+    if (totalPiutang < 0) {
+        totalPiutang = 0;
+    }
+
+
+    return totalPiutang;
 }
 
 
