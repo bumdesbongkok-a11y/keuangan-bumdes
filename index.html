@@ -30,13 +30,19 @@
 
             <!-- PERIODE -->
             <!-- PERIODE -->
+
+<!-- PERIODE -->
 <section class="periode">
 
     <span>Periode</span>
 
-    <strong id="dashboardPeriode">-</strong>
+    <select id="dashboardPeriode">
+        <option value="">Memuat periode...</option>
+    </select>
 
 </section>
+
+
 
 
             <!-- SALDO -->
@@ -102,59 +108,118 @@
 
     <h2>Unit Usaha</h2>
 
-
     <div class="unit-list">
 
-        <button type="button">
+        <div class="unit-card">
 
-            <span>
-                Pengelolaan Sampah
-            </span>
+            <h3>Pengelolaan Sampah</h3>
 
-            <strong id="dashboardSampah">
-                Rp 0
-            </strong>
+            <div class="unit-row">
+                <span>Pemasukan</span>
+                <strong id="dashboardSampahPemasukan">
+                    Rp 0
+                </strong>
+            </div>
 
-        </button>
+            <div class="unit-row">
+                <span>Pengeluaran</span>
+                <strong id="dashboardSampahPengeluaran">
+                    Rp 0
+                </strong>
+            </div>
 
+            <div class="unit-row total">
+                <span>Laba / Rugi</span>
+                <strong id="dashboardSampah">
+                    Rp 0
+                </strong>
+            </div>
 
-        <button type="button">
-
-            <span>
-                Ayam Petelur
-            </span>
-
-            <strong id="dashboardAyam">
-                Rp 0
-            </strong>
-
-        </button>
-
-
-        <button type="button">
-
-            <span>
-                Bank Sampah
-            </span>
-
-            <strong id="dashboardBankSampah">
-                Rp 0
-            </strong>
-
-        </button>
+        </div>
 
 
-        <button type="button">
+        <div class="unit-card">
 
-            <span>
-                Affiliate
-            </span>
+            <h3>Ayam Petelur</h3>
 
-            <strong id="dashboardAffiliateUnit">
-                Rp 0
-            </strong>
+            <div class="unit-row">
+                <span>Pemasukan</span>
+                <strong id="dashboardAyamPemasukan">
+                    Rp 0
+                </strong>
+            </div>
 
-        </button>
+            <div class="unit-row">
+                <span>Pengeluaran</span>
+                <strong id="dashboardAyamPengeluaran">
+                    Rp 0
+                </strong>
+            </div>
+
+            <div class="unit-row total">
+                <span>Laba / Rugi</span>
+                <strong id="dashboardAyam">
+                    Rp 0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="unit-card">
+
+            <h3>Bank Sampah</h3>
+
+            <div class="unit-row">
+                <span>Pemasukan</span>
+                <strong id="dashboardBankSampahPemasukan">
+                    Rp 0
+                </strong>
+            </div>
+
+            <div class="unit-row">
+                <span>Pengeluaran</span>
+                <strong id="dashboardBankSampahPengeluaran">
+                    Rp 0
+                </strong>
+            </div>
+
+            <div class="unit-row total">
+                <span>Laba / Rugi</span>
+                <strong id="dashboardBankSampah">
+                    Rp 0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="unit-card">
+
+            <h3>Affiliate</h3>
+
+            <div class="unit-row">
+                <span>Pemasukan</span>
+                <strong id="dashboardAffiliatePemasukan">
+                    Rp 0
+                </strong>
+            </div>
+
+            <div class="unit-row">
+                <span>Pengeluaran</span>
+                <strong id="dashboardAffiliatePengeluaran">
+                    Rp 0
+                </strong>
+            </div>
+
+            <div class="unit-row total">
+                <span>Laba / Rugi</span>
+                <strong id="dashboardAffiliateUnit">
+                    Rp 0
+                </strong>
+            </div>
+
+        </div>
 
     </div>
 
