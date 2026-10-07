@@ -767,7 +767,7 @@ async function hitungSaldoMediaNeracaFirebase(
 
                     }
                     else if (
-                        media === "AFFILIATE"
+                        media === "SALDO_AFFILIATE"
                     ) {
 
                         // =================================
@@ -818,7 +818,7 @@ async function hitungSaldoMediaNeracaFirebase(
 
                     }
                     else if (
-                        media === "AFFILIATE"
+                        media === "SALDO_AFFILIATE"
                     ) {
 
                         // =================================
@@ -880,7 +880,7 @@ async function hitungSaldoMediaNeracaFirebase(
 
                     }
                     else if (
-                        asal === "AFFILIATE"
+                        asal === "SALDO_AFFILIATE"
                     ) {
 
                         saldoAffiliate -=
@@ -915,7 +915,7 @@ async function hitungSaldoMediaNeracaFirebase(
 
                     }
                     else if (
-                        tujuan === "AFFILIATE"
+                        tujuan === "SALDO_AFFILIATE"
                     ) {
 
                         saldoAffiliate +=
@@ -2251,6 +2251,33 @@ async function hitungLabaRugiNeracaFirebase(
                         String(
                             item.sumber || ""
                         ).toUpperCase();
+						
+					const mediaTujuan =
+						String(
+							item.mediaTujuan || ""
+						).toUpperCase();
+						
+	// =============================================
+    // SALDO AFFILIATE BELUM MENJADI PENDAPATAN
+    // =============================================
+    //
+    // Komisi yang masih berada di saldo Affiliate
+    // belum dianggap sebagai uang BUMDes.
+    //
+    // Pendapatan baru diakui ketika saldo Affiliate
+    // dicairkan/ditransfer ke Kas, Bank atau DANA.
+    //
+    // =============================================
+	
+	
+
+					if (
+						mediaTujuan === "SALDO_AFFILIATE"
+					) {
+
+						return;
+
+						}
 
 
                     if (
