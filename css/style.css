@@ -5233,43 +5233,138 @@ button:active {
     color: #166534;
 }
 
-/* =========================================================
-   SECTION / UNIT USAHA
-   ========================================================= */
-
-.section {
-    margin-top: 28px;
-}
-
-.section h2 {
-    margin-bottom: 14px;
-    font-size: 18px;
-    color: #1f2937;
-}
+ /* =========================================================
+    UNIT USAHA - REKAP PEMASUKAN / PENGELUARAN / LABA RUGI
+    ========================================================= */
 
 .unit-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
 }
 
-.unit-list button {
-    min-height: 68px;
-    padding: 15px 18px;
+/* KARTU UNIT USAHA */
+.unit-card {
     background: #ffffff;
     border: 1px solid var(--warna-border);
     border-radius: var(--radius);
+    padding: 18px;
+
     box-shadow: var(--shadow);
-    text-align: left;
+
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .18s ease;
 }
 
-.unit-list button:hover,
-.menu-grid button:hover,
-.transaksi-menu button:hover,
-.item-master-data:hover {
+.unit-card:hover {
     border-color: #86efac;
-    background: #f8fffa;
     box-shadow: 0 5px 16px rgba(22, 101, 52, .08);
+    transform: translateY(-1px);
+}
+
+/* NAMA UNIT */
+.unit-card h3 {
+    margin: 0 0 16px 0;
+
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+
+    color: #1f2937;
+}
+
+/* BARIS DATA */
+.unit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* LABEL */
+.unit-row span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* NILAI */
+.unit-row strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   LABA / RUGI
+   ========================================================= */
+
+.unit-row.total {
+    margin-top: 4px;
+    padding-top: 12px;
+    padding-bottom: 2px;
+
+    border-bottom: none;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.unit-row.total span {
+    font-weight: 600;
+    color: #374151;
+}
+
+.unit-row.total strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: #166534;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+/* Laptop / layar sedang */
+@media (max-width: 1100px) {
+
+    .unit-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* Tablet / HP */
+@media (max-width: 600px) {
+
+    .unit-list {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .unit-card {
+        padding: 16px;
+    }
+
+    .unit-card h3 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+
+    .unit-row {
+        padding: 8px 0;
+    }
+
 }
 
 /* =========================================================
