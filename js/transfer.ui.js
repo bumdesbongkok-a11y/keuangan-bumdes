@@ -191,14 +191,7 @@ function tampilTransfer(data) {
                 }
 
 
-                if (
-                    media ===
-                    "SALDO_AFFILIATE"
-                ) {
-
-                    return "Saldo Affiliate";
-
-                }
+                
 
 
                 return media || "-";
@@ -494,15 +487,7 @@ function updateMediaTujuanTransfer() {
 
             }
 
-            else if (
-                media ===
-                "SALDO_AFFILIATE"
-            ) {
-
-                option.textContent =
-                    "Saldo Affiliate";
-
-            }
+            
 
             else {
 
@@ -600,9 +585,7 @@ function resetFormTransfer() {
                 DANA
             </option>
 
-            <option value="SALDO_AFFILIATE">
-                Saldo Affiliate
-            </option>
+            
 
         `;
 

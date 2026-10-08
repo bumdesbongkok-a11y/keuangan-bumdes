@@ -669,14 +669,7 @@ async function tampilPemasukan(data) {
 
         }
 
-        else if (
-            item.mediaTujuan ===
-            "SALDO_AFFILIATE"
-        ) {
-
-            media = "Saldo Affiliate";
-
-        }
+        
 
 
         // =====================================

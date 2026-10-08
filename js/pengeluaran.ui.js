@@ -754,15 +754,7 @@ async function tampilPengeluaran(data) {
 
         }
 
-        else if (
-            item.mediaAsal ===
-            "SALDO_AFFILIATE"
-        ) {
-
-            media =
-                "Saldo Affiliate";
-
-        }
+        
 
 
         // =====================================

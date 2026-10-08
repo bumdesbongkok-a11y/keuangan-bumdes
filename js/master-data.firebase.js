@@ -844,12 +844,7 @@ async function inisialisasiMasterAkunResmi() {
                 unitUsaha: ""
             },
 
-            {
-                kode: "1130",
-                nama: "Saldo Affiliate",
-                jenis: "aset",
-                unitUsaha: ""
-            },
+            
 
             {
                 kode: "1200",

@@ -604,10 +604,7 @@ async function tampilDashboard() {
         );
 
 
-        setDashboardNilai(
-            "dashboardAffiliate",
-            saldoMedia.saldoAffiliate
-        );
+        
 
 
         // =====================================

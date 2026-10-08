@@ -48,9 +48,9 @@ const MEDIA_UANG = {
 
     BANK: "BANK",
 
-    DANA: "DANA",
+    DANA: "DANA"
 	
-	 SALDO_AFFILIATE: "SALDO_AFFILIATE"
+	 
 
 };
 
