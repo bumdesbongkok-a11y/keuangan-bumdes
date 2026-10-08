@@ -1985,7 +1985,6 @@ const rowsRingkasan = [
     ["Kas", laporanNeraca.aktivaLancar?.kas || 0],
     ["Bank", laporanNeraca.aktivaLancar?.bank || 0],
     ["DANA", laporanNeraca.aktivaLancar?.dana || 0],
-    ["Saldo Affiliate", laporanNeraca.saldoAffiliate || 0],
     ["Piutang", laporanNeraca.aktivaLancar?.piutang || 0],
     [
         "Aset Tetap",

@@ -174,6 +174,41 @@ function barisNeracaUI(
 
 }
 
+// =========================================
+// BARIS JUMLAH ASET
+// =========================================
+
+function barisJumlahAsetNeracaUI(
+    label,
+    jumlah,
+    classTambahan = ""
+) {
+
+    const angka =
+        Number(jumlah) || 0;
+
+
+    return `
+
+        <div class="
+            baris-neraca
+            ${classTambahan}
+        ">
+
+            <span>
+                ${label}
+            </span>
+
+            <strong>
+                ${angka}
+            </strong>
+
+        </div>
+
+    `;
+
+}
+
 
 // =========================================
 // JUDUL KELOMPOK
@@ -780,10 +815,7 @@ function tampilkanNeracaUI(
                 )}
 
 
-                ${barisNeracaUI(
-                    "Saldo Affiliate",
-                    data.saldoAffiliate
-                )}
+                
 
 
                 ${barisNeracaUI(
@@ -792,10 +824,10 @@ function tampilkanNeracaUI(
                 )}
 
 
-                ${barisNeracaUI(
-                    "Jumlah Aset Tetap",
-                    data.jumlahAsetTetap
-                )}
+                ${barisJumlahAsetNeracaUI(
+    "Jumlah Aset Tetap",
+    data.jumlahAsetTetap
+)}
 
 
                 ${barisNeracaUI(

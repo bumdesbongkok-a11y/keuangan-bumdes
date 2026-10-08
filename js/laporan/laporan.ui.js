@@ -926,10 +926,7 @@ async function tampilArusKas() {
                             data.dana
                         )}
 
-                        ${buatBarisLaporan(
-                            "Saldo Affiliate",
-                            data.saldoAffiliate
-                        )}
+                        
 
                     </tbody>
 

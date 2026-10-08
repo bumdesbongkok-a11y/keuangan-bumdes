@@ -33,16 +33,12 @@
 //    - Penyusutan historis masuk ke Saldo Laba sebelumnya
 //
 // 6. AFFILIATE
-//    - Saldo Affiliate BUKAN media uang Neraca
-//    - Saldo Affiliate tidak menambah Kas
-//    - Saldo Affiliate tidak menambah Bank
-//    - Saldo Affiliate tidak menambah Dana
-//    - Saldo Affiliate hanya berubah pada transaksi Affiliate
-//    - Affiliate -> Kas hanya melalui TRANSFER
-//    - Saat Affiliate ditarik ke Kas:
-//        Affiliate berkurang
-//        Kas bertambah
-//
+//    - Tidak memiliki media uang tersendiri
+//    - Pendapatan Affiliate dicatat setelah dana benar-benar diterima
+//    - Media tujuan hanya KAS, BANK, atau DANA
+//    - Pendapatan Affiliate masuk Laba/Rugi
+//    - Kas/Bank/DANA bertambah sesuai media penerimaan
+//    - Tidak ada transfer dari Affiliate
 // 7. SALDO LABA SEBELUMNYA
 //    - Dimulai dari tahun 2020
 //    - Mengakumulasi laba/rugi setiap tahun sebelum tahun laporan
@@ -618,31 +614,11 @@ function parameterAsetNeraca(
 
 
 // =========================================================
-// HITUNG KAS / BANK / DANA / AFFILIATE
+// HITUNG KAS / BANK / DANA 
 // =========================================================
 //
 // CATATAN PENTING:
-//
-// Affiliate TIDAK dianggap sebagai Kas.
-//
-// Contoh:
-//
-// PEMASUKAN
-// mediaTujuan = AFFILIATE
-//
-// hasil:
-// saldoAffiliate bertambah
-// Kas TIDAK bertambah
-//
-// TRANSFER
-// mediaAsal = AFFILIATE
-// mediaTujuan = KAS
-//
-// hasil:
-// saldoAffiliate berkurang
-// Kas bertambah
-//
-// =========================================================
+
 
 async function hitungSaldoMediaNeracaFirebase(
     sampai
@@ -659,7 +635,7 @@ async function hitungSaldoMediaNeracaFirebase(
 
     let dana = 0;
 
-    let saldoAffiliate = 0;
+    
 
 
     transaksi
@@ -766,18 +742,7 @@ async function hitungSaldoMediaNeracaFirebase(
                         dana += nominal;
 
                     }
-                    else if (
-                        media === "SALDO_AFFILIATE"
-                    ) {
-
-                        // =================================
-                        // AFFILIATE BUKAN KAS
-                        // =================================
-
-                        saldoAffiliate +=
-                            nominal;
-
-                    }
+                    
 
                 }
 
@@ -817,19 +782,7 @@ async function hitungSaldoMediaNeracaFirebase(
                         dana -= nominal;
 
                     }
-                    else if (
-                        media === "SALDO_AFFILIATE"
-                    ) {
-
-                        // =================================
-                        // PENGELUARAN DARI SALDO AFFILIATE
-                        // TIDAK MENGURANGI KAS
-                        // =================================
-
-                        saldoAffiliate -=
-                            nominal;
-
-                    }
+                    
 
                 }
 
@@ -879,14 +832,7 @@ async function hitungSaldoMediaNeracaFirebase(
                         dana -= nominal;
 
                     }
-                    else if (
-                        asal === "SALDO_AFFILIATE"
-                    ) {
-
-                        saldoAffiliate -=
-                            nominal;
-
-                    }
+                    
 
 
                     // =================================
@@ -914,14 +860,7 @@ async function hitungSaldoMediaNeracaFirebase(
                         dana += nominal;
 
                     }
-                    else if (
-                        tujuan === "SALDO_AFFILIATE"
-                    ) {
-
-                        saldoAffiliate +=
-                            nominal;
-
-                    }
+                    
 
                 }
 
@@ -932,10 +871,7 @@ async function hitungSaldoMediaNeracaFirebase(
     // =============================================
     // MEDIA UANG NERACA
     // =============================================
-    //
-    // Affiliate SENGAJA tidak dimasukkan.
-    //
-    // =============================================
+    
 
     const totalKasBankDana =
         kas +
@@ -950,10 +886,6 @@ async function hitungSaldoMediaNeracaFirebase(
         bank,
 
         dana,
-
-        // Informasi saldo affiliate tetap tersedia,
-        // tetapi bukan bagian dari media uang Neraca.
-        saldoAffiliate,
 
         totalKasBankDana,
 
@@ -2257,27 +2189,11 @@ async function hitungLabaRugiNeracaFirebase(
 							item.mediaTujuan || ""
 						).toUpperCase();
 						
-	// =============================================
-    // SALDO AFFILIATE BELUM MENJADI PENDAPATAN
-    // =============================================
-    //
-    // Komisi yang masih berada di saldo Affiliate
-    // belum dianggap sebagai uang BUMDes.
-    //
-    // Pendapatan baru diakui ketika saldo Affiliate
-    // dicairkan/ditransfer ke Kas, Bank atau DANA.
-    //
-    // =============================================
+	
 	
 	
 
-					if (
-						mediaTujuan === "SALDO_AFFILIATE"
-					) {
-
-						return;
-
-						}
+					
 
 
                     if (
@@ -2860,10 +2776,7 @@ async function ambilDataNeracaFirebase(
     );
 
 
-    console.log(
-        "Saldo Affiliate:",
-        saldoMedia.saldoAffiliate
-    );
+    
 
 
     console.log(
@@ -3127,19 +3040,7 @@ async function ambilDataNeracaFirebase(
             totalSaldoLabaSebelumnya,
 
 
-        // =============================================
-        // INFORMASI AFFILIATE
-        // =============================================
-        //
-        // Tetap dikembalikan untuk informasi,
-        // tetapi TIDAK termasuk totalMediaUang.
-        //
-        // =============================================
-
-        saldoAffiliate:
-            Number(
-                saldoMedia.saldoAffiliate
-            ) || 0,
+        
 
 
         totalMediaUang:
@@ -3232,16 +3133,6 @@ console.log(
 
 console.log(
     "NERACA: PENYUSUTAN DIMULAI BULAN BERIKUTNYA"
-);
-
-
-console.log(
-    "NERACA: SALDO AFFILIATE BUKAN MEDIA UANG"
-);
-
-
-console.log(
-    "NERACA: AFFILIATE -> KAS HANYA MELALUI TRANSFER"
 );
 
 
