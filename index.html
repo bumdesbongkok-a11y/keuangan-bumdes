@@ -262,6 +262,10 @@
                     <button onclick="bukaHalaman('laporan')">
 						Laporan
 					</button>
+					
+					<button onclick="bukaHalaman('target-retribusi')">
+                        Target Retribusi
+                    </button>
 
                     <button onclick="bukaHalaman('tutup-buku')">
 						Tutup Buku
@@ -2860,6 +2864,82 @@
 
 </section>
 
+
+<!-- =========================================
+     HALAMAN TARGET RETRIBUSI
+     KEUANGAN BUMDES SUMBER REJEKI
+     ========================================= -->
+
+<section
+    id="halaman-target-retribusi"
+    class="halaman"
+>
+
+    <!-- KEMBALI -->
+    <button
+        class="btn-kembali"
+        onclick="bukaHalaman('dashboard')"
+    >
+        ← Kembali
+    </button>
+
+    <h2>Target Retribusi Sampah</h2>
+
+    <div class="info-master-data">
+        <p>
+            Kelola target penerimaan retribusi sampah
+            BUMDes Sumber Rejeki per RT setiap bulan.
+        </p>
+    </div>
+
+    <!-- FILTER PERIODE -->
+    <div class="form-group">
+        <label for="target-periode">Bulan Target</label>
+        <input
+            type="month"
+            id="target-periode"
+        >
+    </div>
+
+    <!-- RINGKASAN -->
+    <div id="target-ringkasan">
+
+        <p>
+            Target dan realisasi akan ditampilkan
+            setelah data target dimuat.
+        </p>
+
+    </div>
+
+    <!-- TABEL TARGET -->
+    
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>RW</th>
+                <th>RT</th>
+                <th>Jumlah Pelanggan</th>
+                <th>Target (Rp)</th>
+                <th>Realisasi BUMDes (Rp)</th>
+                <th>Pencapaian</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+
+        <tbody id="target-tabel-body">
+            <tr>
+                <td colspan="8">Data target belum dimuat.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</section>
+
+
         <!-- FOOTER -->
         <footer>
 
@@ -2938,6 +3018,9 @@
 	<script src="js/master-data.js"></script>
 
 	<script src="js/dashboard.js"></script>
+	
+	<script src="js/target-retribusi-firebase.js"></script>
+	<script src="js/target-retribusi.js"></script>
 
 	<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 	<script src="js/laporan/exportExcel.js"></script>
