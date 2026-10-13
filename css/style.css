@@ -7024,3 +7024,192 @@ footer {
     background-color: #146c43 !important;
     color: #ffffff !important;
 }
+
+```css
+/* =========================================
+   TARGET RETRIBUSI SAMPAH
+   BUMDes SUMBER REJEKI
+   ========================================= */
+
+#halaman-target-retribusi {
+    padding: 20px;
+    color: #26352d;
+    box-sizing: border-box;
+}
+
+#halaman-target-retribusi h2 {
+    color: #245c3a;
+    margin-bottom: 8px;
+    font-size: 24px;
+}
+
+#halaman-target-retribusi h3 {
+    color: #245c3a;
+    margin-bottom: 16px;
+}
+
+/* =========================================
+   RINGKASAN TARGET
+   ========================================= */
+
+#target-ringkasan {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+    padding: 18px;
+    background: #f4f8f4;
+    border: 1px solid #d9e7dc;
+    border-radius: 12px;
+}
+
+#target-ringkasan p {
+    margin: 0;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #e1e9e2;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+#target-ringkasan p:last-child {
+    grid-column: 1 / -1;
+    background: transparent;
+    border: none;
+    padding: 4px 0 0;
+    font-size: 13px;
+    color: #5d6d62;
+}
+
+/* =========================================
+   TABEL TARGET RETRIBUSI
+   ========================================= */
+
+#halaman-target-retribusi table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border: 1px solid #dce5de;
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 13px;
+}
+
+#halaman-target-retribusi th {
+    padding: 14px 12px;
+    background: #245c3a;
+    color: #ffffff;
+    text-align: center;
+    font-weight: 600;
+    border-right: 1px solid #49775a;
+    white-space: nowrap;
+}
+
+#halaman-target-retribusi td {
+    padding: 12px;
+    border-right: 1px solid #e5ebe6;
+    border-bottom: 1px solid #e5ebe6;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#halaman-target-retribusi tbody tr:nth-child(even) {
+    background: #f5f8f5;
+}
+
+#halaman-target-retribusi tbody tr:hover {
+    background: #eaf4ec;
+}
+
+#halaman-target-retribusi th:last-child,
+#halaman-target-retribusi td:last-child {
+    border-right: none;
+}
+
+#halaman-target-retribusi tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================
+   INPUT JUMLAH PELANGGAN
+   ========================================= */
+
+#halaman-target-retribusi input[type="number"] {
+    width: 100px !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 9px 8px;
+    border: 1px solid #b8c9bc;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #26352d;
+    text-align: center;
+    font-size: 14px;
+}
+
+#halaman-target-retribusi input[type="number"]:focus {
+    outline: none;
+    border-color: #287747;
+    box-shadow: 0 0 0 3px rgba(40, 119, 71, 0.12);
+}
+
+/* =========================================
+   TOMBOL SIMPAN
+   ========================================= */
+
+#halaman-target-retribusi td button {
+    padding: 8px 14px;
+    background: #287747;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+#halaman-target-retribusi td button:hover {
+    background: #1d5b34;
+}
+
+#halaman-target-retribusi td button:active {
+    transform: translateY(1px);
+}
+
+/* =========================================
+   TAMPILAN LAYAR KECIL
+   ========================================= */
+
+@media (max-width: 768px) {
+    #halaman-target-retribusi {
+        padding: 12px;
+    }
+
+    #halaman-target-retribusi h2 {
+        font-size: 21px;
+    }
+
+    #target-ringkasan {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 8px;
+    }
+
+    #target-ringkasan p:last-child {
+        grid-column: auto;
+    }
+
+    #halaman-target-retribusi table {
+        font-size: 12px;
+    }
+
+    #halaman-target-retribusi th,
+    #halaman-target-retribusi td {
+        padding: 10px 8px;
+    }
+}
+```
