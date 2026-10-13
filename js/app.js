@@ -127,6 +127,18 @@ if (namaHalaman === "laporan") {
 
 }
 
+
+// =====================================
+// HALAMAN TARGET RETRIBUSI
+// =====================================
+
+if (namaHalaman === "target-retribusi") {
+
+    siapkanHalamanTargetRetribusi();
+
+}
+
+
 // =====================================
 // HALAMAN TUTUP BUKU
 // =====================================
